@@ -134,7 +134,7 @@ const Login = () => {
                       />
                     </div>
 
-                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+                    <Button type="submit" className="w-full bg-barbershop-gold hover:bg-barbershop-gold/80 text-barbershop-dark">
                       Entrar
                     </Button>
 
@@ -197,7 +197,7 @@ const Login = () => {
                       />
                     </div>
 
-                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+                    <Button type="submit" className="w-full bg-barbershop-gold hover:bg-barbershop-gold/80 text-barbershop-dark">
                       Criar Conta
                     </Button>
                   </form>

@@ -1,0 +1,43 @@
+:root {
+  --background: #1a1a1a;
+  --foreground: #e0e0e0;
+
+  --card: #2c2c2c;
+  --card-foreground: #e0e0e0;
+
+  --popover: #2c2c2c;
+  --popover-foreground: #e0e0e0;
+
+  --primary: #fbbf24;
+  --primary-foreground: #1a1a1a;
+
+  --secondary: #4b5563;
+  --secondary-foreground: #e0e0e0;
+
+  --muted: #3a3a3a;
+  --muted-foreground: #a0a0a0;
+
+  --accent: #fbbf24;
+  --accent-foreground: #1a1a1a;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #444444;
+  --input: #3a3a3a;
+  --ring: #fbbf24;
+
+  --sidebar-background: #2c2c2c;
+  --sidebar-foreground: #e0e0e0;
+  --sidebar-primary: #fbbf24;
+  --sidebar-primary-foreground: #1a1a1a;
+  --sidebar-accent: #3a3a3a;
+  --sidebar-accent-foreground: #e0e0e0;
+  --sidebar-border: #444444;
+  --sidebar-ring: #fbbf24;
+}
+
+.index-dark-theme {
+  background-color: var(--background);
+  color: #3a3a3a;
+}

@@ -248,11 +248,11 @@ const Agendamento = () => {
                 </div>
 
                 <Button 
-                  type="submit" 
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-bold text-lg py-6"
-                >
-                  Confirmar Agendamento
-                </Button>
+                type="submit"
+                className="w-full bg-barbershop-gold hover:bg-barbershop-gold/80 text-barbershop-dark font-bold text-lg py-6"
+              >
+                Confirmar Agendamento
+              </Button>
               </form>
             </CardContent>
           </Card>
