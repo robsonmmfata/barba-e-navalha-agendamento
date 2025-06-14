@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -81,7 +80,7 @@ const Agendamento = () => {
   const selectedBarberData = barbers.find(b => b.id === selectedBarber);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -207,6 +206,7 @@ const Agendamento = () => {
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
+                          type="button"
                           className={cn(
                             "w-full justify-start text-left font-normal bg-white/70 border-gray-300 hover:bg-white/90",
                             !selectedDate && "text-gray-400"
