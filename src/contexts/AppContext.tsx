@@ -40,6 +40,9 @@ interface AppContextType {
   addService: (service: Omit<Service, 'id'>) => void;
   updateService: (id: string, service: Partial<Service>) => void;
   deleteService: (id: string) => void;
+  addBarber: (barber: Omit<Barber, 'id'>) => void;
+  updateBarber: (id: string, barber: Partial<Barber>) => void;
+  deleteBarber: (id: string) => void;
   addClient: (client: Omit<Client, 'id'>) => void;
   addAppointment: (appointment: Omit<Appointment, 'id'>) => void;
   updateAppointmentStatus: (id: string, status: Appointment['status']) => void;
@@ -63,7 +66,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     { id: '4', name: 'Corte Premium', price: 45, duration: 60 },
   ]);
 
-  const [barbers] = useState<Barber[]>([
+  const [barbers, setBarbers] = useState<Barber[]>([
     { id: '1', name: 'João Silva', specialty: 'Cortes Clássicos', experience: '8 anos' },
     { id: '2', name: 'Pedro Santos', specialty: 'Barbas e Bigodes', experience: '5 anos' },
     { id: '3', name: 'Carlos Oliveira', specialty: 'Cortes Modernos', experience: '10 anos' },
@@ -76,6 +79,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const savedClients = localStorage.getItem('barbershop-clients');
     const savedAppointments = localStorage.getItem('barbershop-appointments');
     const savedServices = localStorage.getItem('barbershop-services');
+    const savedBarbers = localStorage.getItem('barbershop-barbers');
 
     if (savedClients) {
       setClients(JSON.parse(savedClients));
@@ -85,6 +89,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     if (savedServices) {
       setServices(JSON.parse(savedServices));
+    }
+    if (savedBarbers) {
+      setBarbers(JSON.parse(savedBarbers));
     }
   }, []);
 
@@ -100,6 +107,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('barbershop-services', JSON.stringify(services));
   }, [services]);
 
+  useEffect(() => {
+    localStorage.setItem('barbershop-barbers', JSON.stringify(barbers));
+  }, [barbers]);
+
   const addService = (service: Omit<Service, 'id'>) => {
     const newService = { ...service, id: Date.now().toString() };
     setServices(prev => [...prev, newService]);
@@ -113,6 +124,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const deleteService = (id: string) => {
     setServices(prev => prev.filter(service => service.id !== id));
+  };
+
+  const addBarber = (barber: Omit<Barber, 'id'>) => {
+    const newBarber = { ...barber, id: Date.now().toString() };
+    setBarbers(prev => [...prev, newBarber]);
+  };
+
+  const updateBarber = (id: string, updatedBarber: Partial<Barber>) => {
+    setBarbers(prev => prev.map(barber => 
+      barber.id === id ? { ...barber, ...updatedBarber } : barber
+    ));
+  };
+
+  const deleteBarber = (id: string) => {
+    setBarbers(prev => prev.filter(barber => barber.id !== id));
   };
 
   const addClient = (client: Omit<Client, 'id'>) => {
@@ -140,6 +166,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addService,
       updateService,
       deleteService,
+      addBarber,
+      updateBarber,
+      deleteBarber,
       addClient,
       addAppointment,
       updateAppointmentStatus,

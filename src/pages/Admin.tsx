@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +13,7 @@ import { Link } from "react-router-dom";
 import { useApp } from "@/contexts/AppContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Scissors, ArrowLeft, Plus, Edit, Trash2, Users, Calendar, DollarSign } from "lucide-react";
+import { Scissors, ArrowLeft, Plus, Edit, Trash2, Users, Calendar, DollarSign, User } from "lucide-react";
 
 const Admin = () => {
   const { 
@@ -24,7 +23,10 @@ const Admin = () => {
     barbers,
     addService, 
     updateService, 
-    deleteService, 
+    deleteService,
+    addBarber,
+    updateBarber,
+    deleteBarber,
     updateAppointmentStatus 
   } = useApp();
 
@@ -34,6 +36,14 @@ const Admin = () => {
     name: "",
     price: "",
     duration: "",
+  });
+
+  const [isAddBarberOpen, setIsAddBarberOpen] = useState(false);
+  const [editingBarber, setEditingBarber] = useState<any>(null);
+  const [newBarber, setNewBarber] = useState({
+    name: "",
+    specialty: "",
+    experience: "",
   });
 
   const handleAddService = (e: React.FormEvent) => {
@@ -76,6 +86,48 @@ const Admin = () => {
   const handleDeleteService = (id: string) => {
     deleteService(id);
     toast.success("Serviço removido com sucesso!");
+  };
+
+  const handleAddBarber = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newBarber.name || !newBarber.specialty || !newBarber.experience) {
+      toast.error("Por favor, preencha todos os campos");
+      return;
+    }
+
+    addBarber({
+      name: newBarber.name,
+      specialty: newBarber.specialty,
+      experience: newBarber.experience,
+    });
+
+    toast.success("Barbeiro adicionado com sucesso!");
+    setNewBarber({ name: "", specialty: "", experience: "" });
+    setIsAddBarberOpen(false);
+  };
+
+  const handleUpdateBarber = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingBarber || !editingBarber.name || !editingBarber.specialty || !editingBarber.experience) {
+      toast.error("Por favor, preencha todos os campos");
+      return;
+    }
+
+    updateBarber(editingBarber.id, {
+      name: editingBarber.name,
+      specialty: editingBarber.specialty,
+      experience: editingBarber.experience,
+    });
+
+    toast.success("Barbeiro atualizado com sucesso!");
+    setEditingBarber(null);
+  };
+
+  const handleDeleteBarber = (id: string) => {
+    deleteBarber(id);
+    toast.success("Barbeiro removido com sucesso!");
   };
 
   const getStatusColor = (status: string) => {
@@ -126,7 +178,7 @@ const Admin = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
+        <div className="grid md:grid-cols-5 gap-6 mb-8">
           <Card className="bg-gray-800/90 border-amber-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-300">Total de Clientes</CardTitle>
@@ -144,6 +196,16 @@ const Admin = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-white">{appointments.length}</div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-800/90 border-amber-500/20">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-300">Barbeiros</CardTitle>
+              <User className="h-4 w-4 text-amber-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">{barbers.length}</div>
             </CardContent>
           </Card>
 
@@ -175,9 +237,12 @@ const Admin = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="appointments" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 bg-gray-800/90">
+          <TabsList className="grid w-full grid-cols-4 bg-gray-800/90">
             <TabsTrigger value="appointments" className="text-white data-[state=active]:bg-amber-500 data-[state=active]:text-black">
               Agendamentos
+            </TabsTrigger>
+            <TabsTrigger value="barbers" className="text-white data-[state=active]:bg-amber-500 data-[state=active]:text-black">
+              Barbeiros
             </TabsTrigger>
             <TabsTrigger value="services" className="text-white data-[state=active]:bg-amber-500 data-[state=active]:text-black">
               Serviços
@@ -243,6 +308,142 @@ const Admin = () => {
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Barbers Tab */}
+          <TabsContent value="barbers">
+            <Card className="bg-gray-800/90 border-amber-500/20">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="text-white">Barbeiros</CardTitle>
+                    <CardDescription className="text-gray-300">
+                      Gerencie os barbeiros da barbearia
+                    </CardDescription>
+                  </div>
+                  <Dialog open={isAddBarberOpen} onOpenChange={setIsAddBarberOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-amber-500 hover:bg-amber-600 text-black">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Novo Barbeiro
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-gray-800 border-amber-500/20">
+                      <DialogHeader>
+                        <DialogTitle className="text-white">Adicionar Novo Barbeiro</DialogTitle>
+                        <DialogDescription className="text-gray-300">
+                          Preencha os dados do novo barbeiro
+                        </DialogDescription>
+                      </DialogHeader>
+                      <form onSubmit={handleAddBarber} className="space-y-4">
+                        <div>
+                          <Label htmlFor="barber-name" className="text-white">Nome do Barbeiro</Label>
+                          <Input
+                            id="barber-name"
+                            value={newBarber.name}
+                            onChange={(e) => setNewBarber(prev => ({ ...prev, name: e.target.value }))}
+                            className="bg-gray-700 border-amber-500/30 text-white"
+                            placeholder="Ex: João Silva"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="barber-specialty" className="text-white">Especialidade</Label>
+                          <Input
+                            id="barber-specialty"
+                            value={newBarber.specialty}
+                            onChange={(e) => setNewBarber(prev => ({ ...prev, specialty: e.target.value }))}
+                            className="bg-gray-700 border-amber-500/30 text-white"
+                            placeholder="Ex: Cortes Modernos"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="barber-experience" className="text-white">Experiência</Label>
+                          <Input
+                            id="barber-experience"
+                            value={newBarber.experience}
+                            onChange={(e) => setNewBarber(prev => ({ ...prev, experience: e.target.value }))}
+                            className="bg-gray-700 border-amber-500/30 text-white"
+                            placeholder="Ex: 5 anos"
+                          />
+                        </div>
+                        <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black">
+                          Adicionar Barbeiro
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4">
+                  {barbers.map((barber) => (
+                    <div key={barber.id} className="flex items-center justify-between p-4 border border-amber-500/20 rounded-lg">
+                      <div>
+                        <h3 className="text-white font-semibold">{barber.name}</h3>
+                        <p className="text-gray-300">{barber.specialty} • {barber.experience}</p>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="border-amber-500/30 text-amber-500 hover:bg-amber-500 hover:text-black"
+                              onClick={() => setEditingBarber(barber)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="bg-gray-800 border-amber-500/20">
+                            <DialogHeader>
+                              <DialogTitle className="text-white">Editar Barbeiro</DialogTitle>
+                            </DialogHeader>
+                            {editingBarber && (
+                              <form onSubmit={handleUpdateBarber} className="space-y-4">
+                                <div>
+                                  <Label className="text-white">Nome do Barbeiro</Label>
+                                  <Input
+                                    value={editingBarber.name}
+                                    onChange={(e) => setEditingBarber(prev => ({ ...prev, name: e.target.value }))}
+                                    className="bg-gray-700 border-amber-500/30 text-white"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-white">Especialidade</Label>
+                                  <Input
+                                    value={editingBarber.specialty}
+                                    onChange={(e) => setEditingBarber(prev => ({ ...prev, specialty: e.target.value }))}
+                                    className="bg-gray-700 border-amber-500/30 text-white"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-white">Experiência</Label>
+                                  <Input
+                                    value={editingBarber.experience}
+                                    onChange={(e) => setEditingBarber(prev => ({ ...prev, experience: e.target.value }))}
+                                    className="bg-gray-700 border-amber-500/30 text-white"
+                                  />
+                                </div>
+                                <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black">
+                                  Salvar Alterações
+                                </Button>
+                              </form>
+                            )}
+                          </DialogContent>
+                        </Dialog>
+                        <Button 
+                          variant="destructive" 
+                          size="sm"
+                          onClick={() => handleDeleteBarber(barber.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
