@@ -8,8 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useApp } from "@/contexts/AppContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CalendarIcon, Scissors, ArrowLeft } from "lucide-react";
@@ -17,14 +18,16 @@ import { cn } from "@/lib/utils";
 
 const Agendamento = () => {
   const { services, barbers, addClient, addAppointment } = useApp();
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [selectedBarber, setSelectedBarber] = useState("");
   const [clientData, setClientData] = useState({
-    name: "",
-    phone: "",
-    email: "",
+    name: user?.name || "",
+    phone: user?.phone || "",
+    email: user?.email || "",
   });
 
   const timeSlots = [
@@ -42,12 +45,14 @@ const Agendamento = () => {
       return;
     }
 
-    // Add client
-    addClient(clientData);
+    // Add client if not authenticated
+    if (!isAuthenticated) {
+      addClient(clientData);
+    }
     
     // Add appointment
     addAppointment({
-      clientId: Date.now().toString(),
+      clientId: user?.id || Date.now().toString(),
       barberId: selectedBarber,
       serviceId: selectedService,
       date: format(selectedDate, "yyyy-MM-dd"),
@@ -59,101 +64,115 @@ const Agendamento = () => {
       description: `${clientData.name}, seu horário foi confirmado para ${format(selectedDate, "dd 'de' MMMM", { locale: ptBR })} às ${selectedTime}.`
     });
 
-    // Reset form
-    setSelectedDate(undefined);
-    setSelectedTime("");
-    setSelectedService("");
-    setSelectedBarber("");
-    setClientData({ name: "", phone: "", email: "" });
+    // Redirect based on authentication
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      // Reset form for non-authenticated users
+      setSelectedDate(undefined);
+      setSelectedTime("");
+      setSelectedService("");
+      setSelectedBarber("");
+      setClientData({ name: "", phone: "", email: "" });
+    }
   };
 
   const selectedServiceData = services.find(s => s.id === selectedService);
   const selectedBarberData = barbers.find(b => b.id === selectedBarber);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-barbershop-dark via-barbershop-dark-light to-black">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
-            <Link to="/">
-              <Button variant="outline" size="sm" className="border-barbershop-gold text-barbershop-gold hover:bg-barbershop-gold hover:text-barbershop-dark">
+            <Link to={isAuthenticated ? "/dashboard" : "/"}>
+              <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-white">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Voltar
               </Button>
             </Link>
             <div className="flex items-center space-x-2">
-              <Scissors className="h-8 w-8 text-barbershop-gold" />
-              <h1 className="text-3xl font-bold text-white">Agendamento Online</h1>
+              <Scissors className="h-8 w-8 text-primary" />
+              <h1 className="text-3xl font-bold text-gray-800">Agendamento Online</h1>
             </div>
           </div>
+          {!isAuthenticated && (
+            <Link to="/login">
+              <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white">
+                Fazer Login
+              </Button>
+            </Link>
+          )}
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Form */}
-          <Card className="bg-barbershop-dark-light border-barbershop-gold/20">
+          <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0">
             <CardHeader>
-              <CardTitle className="text-white text-2xl">Faça seu Agendamento</CardTitle>
-              <CardDescription className="text-gray-400">
+              <CardTitle className="text-gray-800 text-2xl">Faça seu Agendamento</CardTitle>
+              <CardDescription className="text-gray-600">
                 Preencha os dados abaixo para agendar seu horário
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Client Data */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-barbershop-gold">Dados Pessoais</h3>
-                  
-                  <div>
-                    <Label htmlFor="name" className="text-white">Nome Completo *</Label>
-                    <Input
-                      id="name"
-                      value={clientData.name}
-                      onChange={(e) => setClientData(prev => ({ ...prev, name: e.target.value }))}
-                      className="bg-barbershop-dark border-barbershop-gold/30 text-white placeholder:text-gray-400"
-                      placeholder="Seu nome completo"
-                      required
-                    />
-                  </div>
+                {!isAuthenticated && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-primary">Dados Pessoais</h3>
+                    
+                    <div>
+                      <Label htmlFor="name" className="text-gray-700">Nome Completo *</Label>
+                      <Input
+                        id="name"
+                        value={clientData.name}
+                        onChange={(e) => setClientData(prev => ({ ...prev, name: e.target.value }))}
+                        className="bg-white/70 border-gray-300 focus:border-primary"
+                        placeholder="Seu nome completo"
+                        required
+                      />
+                    </div>
 
-                  <div>
-                    <Label htmlFor="phone" className="text-white">Telefone *</Label>
-                    <Input
-                      id="phone"
-                      value={clientData.phone}
-                      onChange={(e) => setClientData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="bg-barbershop-dark border-barbershop-gold/30 text-white placeholder:text-gray-400"
-                      placeholder="(11) 99999-9999"
-                      required
-                    />
-                  </div>
+                    <div>
+                      <Label htmlFor="phone" className="text-gray-700">Telefone *</Label>
+                      <Input
+                        id="phone"
+                        value={clientData.phone}
+                        onChange={(e) => setClientData(prev => ({ ...prev, phone: e.target.value }))}
+                        className="bg-white/70 border-gray-300 focus:border-primary"
+                        placeholder="(11) 99999-9999"
+                        required
+                      />
+                    </div>
 
-                  <div>
-                    <Label htmlFor="email" className="text-white">E-mail</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={clientData.email}
-                      onChange={(e) => setClientData(prev => ({ ...prev, email: e.target.value }))}
-                      className="bg-barbershop-dark border-barbershop-gold/30 text-white placeholder:text-gray-400"
-                      placeholder="seu@email.com"
-                    />
+                    <div>
+                      <Label htmlFor="email" className="text-gray-700">E-mail</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={clientData.email}
+                        onChange={(e) => setClientData(prev => ({ ...prev, email: e.target.value }))}
+                        className="bg-white/70 border-gray-300 focus:border-primary"
+                        placeholder="seu@email.com"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Service Selection */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-barbershop-gold">Serviço e Profissional</h3>
+                  <h3 className="text-lg font-semibold text-primary">Serviço e Profissional</h3>
                   
                   <div>
-                    <Label className="text-white">Serviço *</Label>
+                    <Label className="text-gray-700">Serviço *</Label>
                     <Select value={selectedService} onValueChange={setSelectedService}>
-                      <SelectTrigger className="bg-barbershop-dark border-barbershop-gold/30 text-white">
+                      <SelectTrigger className="bg-white/70 border-gray-300 focus:border-primary">
                         <SelectValue placeholder="Escolha um serviço" />
                       </SelectTrigger>
-                      <SelectContent className="bg-barbershop-dark border-barbershop-gold/30">
+                      <SelectContent className="bg-white">
                         {services.map((service) => (
-                          <SelectItem key={service.id} value={service.id} className="text-white hover:bg-barbershop-gold/20">
+                          <SelectItem key={service.id} value={service.id}>
                             {service.name} - R$ {service.price} ({service.duration}min)
                           </SelectItem>
                         ))}
@@ -162,14 +181,14 @@ const Agendamento = () => {
                   </div>
 
                   <div>
-                    <Label className="text-white">Barbeiro *</Label>
+                    <Label className="text-gray-700">Barbeiro *</Label>
                     <Select value={selectedBarber} onValueChange={setSelectedBarber}>
-                      <SelectTrigger className="bg-barbershop-dark border-barbershop-gold/30 text-white">
+                      <SelectTrigger className="bg-white/70 border-gray-300 focus:border-primary">
                         <SelectValue placeholder="Escolha um barbeiro" />
                       </SelectTrigger>
-                      <SelectContent className="bg-barbershop-dark border-barbershop-gold/30">
+                      <SelectContent className="bg-white">
                         {barbers.map((barber) => (
-                          <SelectItem key={barber.id} value={barber.id} className="text-white hover:bg-barbershop-gold/20">
+                          <SelectItem key={barber.id} value={barber.id}>
                             {barber.name} - {barber.specialty}
                           </SelectItem>
                         ))}
@@ -180,16 +199,16 @@ const Agendamento = () => {
 
                 {/* Date and Time Selection */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-barbershop-gold">Data e Horário</h3>
+                  <h3 className="text-lg font-semibold text-primary">Data e Horário</h3>
                   
                   <div>
-                    <Label className="text-white">Data *</Label>
+                    <Label className="text-gray-700">Data *</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
                           className={cn(
-                            "w-full justify-start text-left font-normal bg-barbershop-dark border-barbershop-gold/30 text-white hover:bg-barbershop-gold/10",
+                            "w-full justify-start text-left font-normal bg-white/70 border-gray-300 hover:bg-white/90",
                             !selectedDate && "text-gray-400"
                           )}
                         >
@@ -197,7 +216,7 @@ const Agendamento = () => {
                           {selectedDate ? format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Selecione uma data"}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0 bg-barbershop-dark border-barbershop-gold/30" align="start">
+                      <PopoverContent className="w-auto p-0 bg-white" align="start">
                         <Calendar
                           mode="single"
                           selected={selectedDate}
@@ -211,14 +230,14 @@ const Agendamento = () => {
                   </div>
 
                   <div>
-                    <Label className="text-white">Horário *</Label>
+                    <Label className="text-gray-700">Horário *</Label>
                     <Select value={selectedTime} onValueChange={setSelectedTime}>
-                      <SelectTrigger className="bg-barbershop-dark border-barbershop-gold/30 text-white">
+                      <SelectTrigger className="bg-white/70 border-gray-300 focus:border-primary">
                         <SelectValue placeholder="Escolha um horário" />
                       </SelectTrigger>
-                      <SelectContent className="bg-barbershop-dark border-barbershop-gold/30">
+                      <SelectContent className="bg-white">
                         {timeSlots.map((time) => (
-                          <SelectItem key={time} value={time} className="text-white hover:bg-barbershop-gold/20">
+                          <SelectItem key={time} value={time}>
                             {time}
                           </SelectItem>
                         ))}
@@ -229,7 +248,7 @@ const Agendamento = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-barbershop-gold hover:bg-barbershop-gold/80 text-barbershop-dark font-bold text-lg py-6"
+                  className="w-full bg-primary hover:bg-primary/90 text-white font-bold text-lg py-6"
                 >
                   Confirmar Agendamento
                 </Button>
@@ -238,48 +257,48 @@ const Agendamento = () => {
           </Card>
 
           {/* Summary */}
-          <Card className="bg-barbershop-dark-light border-barbershop-gold/20 h-fit">
+          <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 h-fit">
             <CardHeader>
-              <CardTitle className="text-white text-2xl">Resumo do Agendamento</CardTitle>
+              <CardTitle className="text-gray-800 text-2xl">Resumo do Agendamento</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {selectedServiceData && (
-                <div className="border-b border-barbershop-gold/20 pb-4">
-                  <h4 className="text-barbershop-gold font-semibold mb-2">Serviço</h4>
-                  <p className="text-white">{selectedServiceData.name}</p>
-                  <p className="text-gray-400">R$ {selectedServiceData.price} • {selectedServiceData.duration} minutos</p>
+                <div className="border-b border-gray-200 pb-4">
+                  <h4 className="text-primary font-semibold mb-2">Serviço</h4>
+                  <p className="text-gray-800">{selectedServiceData.name}</p>
+                  <p className="text-gray-600">R$ {selectedServiceData.price} • {selectedServiceData.duration} minutos</p>
                 </div>
               )}
 
               {selectedBarberData && (
-                <div className="border-b border-barbershop-gold/20 pb-4">
-                  <h4 className="text-barbershop-gold font-semibold mb-2">Profissional</h4>
-                  <p className="text-white">{selectedBarberData.name}</p>
-                  <p className="text-gray-400">{selectedBarberData.specialty}</p>
+                <div className="border-b border-gray-200 pb-4">
+                  <h4 className="text-primary font-semibold mb-2">Profissional</h4>
+                  <p className="text-gray-800">{selectedBarberData.name}</p>
+                  <p className="text-gray-600">{selectedBarberData.specialty}</p>
                 </div>
               )}
 
               {selectedDate && selectedTime && (
-                <div className="border-b border-barbershop-gold/20 pb-4">
-                  <h4 className="text-barbershop-gold font-semibold mb-2">Data e Horário</h4>
-                  <p className="text-white">{format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
-                  <p className="text-gray-400">{selectedTime}</p>
+                <div className="border-b border-gray-200 pb-4">
+                  <h4 className="text-primary font-semibold mb-2">Data e Horário</h4>
+                  <p className="text-gray-800">{format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
+                  <p className="text-gray-600">{selectedTime}</p>
                 </div>
               )}
 
-              {clientData.name && (
+              {(clientData.name || user?.name) && (
                 <div>
-                  <h4 className="text-barbershop-gold font-semibold mb-2">Cliente</h4>
-                  <p className="text-white">{clientData.name}</p>
-                  <p className="text-gray-400">{clientData.phone}</p>
+                  <h4 className="text-primary font-semibold mb-2">Cliente</h4>
+                  <p className="text-gray-800">{clientData.name || user?.name}</p>
+                  <p className="text-gray-600">{clientData.phone || user?.phone}</p>
                 </div>
               )}
 
               {selectedServiceData && (
-                <div className="pt-4 border-t border-barbershop-gold/20">
+                <div className="pt-4 border-t border-gray-200">
                   <div className="flex justify-between items-center">
-                    <span className="text-lg font-semibold text-white">Total:</span>
-                    <span className="text-2xl font-bold text-barbershop-gold">R$ {selectedServiceData.price}</span>
+                    <span className="text-lg font-semibold text-gray-800">Total:</span>
+                    <span className="text-2xl font-bold text-primary">R$ {selectedServiceData.price}</span>
                   </div>
                 </div>
               )}

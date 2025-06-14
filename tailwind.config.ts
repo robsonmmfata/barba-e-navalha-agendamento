@@ -64,10 +64,10 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				barbershop: {
-					gold: '#D4AF37',
-					'gold-light': '#F4E4A1',
-					'dark': '#1a1a1a',
-					'dark-light': '#2a2a2a'
+					gold: '#fbbf24',
+					'gold-light': '#fde68a',
+					'warm': '#f59e0b',
+					'warm-light': '#fcd34d'
 				}
 			},
 			borderRadius: {
