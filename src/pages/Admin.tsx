@@ -107,19 +107,19 @@ const Admin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-barbershop-dark via-barbershop-dark-light to-black">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <Link to="/">
-              <Button variant="outline" size="sm" className="border-barbershop-gold text-barbershop-gold hover:bg-barbershop-gold hover:text-barbershop-dark">
+              <Button variant="outline" size="sm" className="border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-black">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Voltar
               </Button>
             </Link>
             <div className="flex items-center space-x-2">
-              <Scissors className="h-8 w-8 text-barbershop-gold" />
+              <Scissors className="h-8 w-8 text-amber-500" />
               <h1 className="text-3xl font-bold text-white">Painel Administrativo</h1>
             </div>
           </div>
@@ -127,40 +127,40 @@ const Admin = () => {
 
         {/* Stats Cards */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-barbershop-dark-light border-barbershop-gold/20">
+          <Card className="bg-gray-800/90 border-amber-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Total de Clientes</CardTitle>
-              <Users className="h-4 w-4 text-barbershop-gold" />
+              <CardTitle className="text-sm font-medium text-gray-300">Total de Clientes</CardTitle>
+              <Users className="h-4 w-4 text-amber-500" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-white">{clients.length}</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-barbershop-dark-light border-barbershop-gold/20">
+          <Card className="bg-gray-800/90 border-amber-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Agendamentos</CardTitle>
-              <Calendar className="h-4 w-4 text-barbershop-gold" />
+              <CardTitle className="text-sm font-medium text-gray-300">Agendamentos</CardTitle>
+              <Calendar className="h-4 w-4 text-amber-500" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-white">{appointments.length}</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-barbershop-dark-light border-barbershop-gold/20">
+          <Card className="bg-gray-800/90 border-amber-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Serviços</CardTitle>
-              <Scissors className="h-4 w-4 text-barbershop-gold" />
+              <CardTitle className="text-sm font-medium text-gray-300">Serviços</CardTitle>
+              <Scissors className="h-4 w-4 text-amber-500" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-white">{services.length}</div>
             </CardContent>
           </Card>
 
-          <Card className="bg-barbershop-dark-light border-barbershop-gold/20">
+          <Card className="bg-gray-800/90 border-amber-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Receita (Est.)</CardTitle>
-              <DollarSign className="h-4 w-4 text-barbershop-gold" />
+              <CardTitle className="text-sm font-medium text-gray-300">Receita (Est.)</CardTitle>
+              <DollarSign className="h-4 w-4 text-amber-500" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-white">
@@ -175,43 +175,43 @@ const Admin = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="appointments" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 bg-barbershop-dark-light">
-            <TabsTrigger value="appointments" className="text-white data-[state=active]:bg-barbershop-gold data-[state=active]:text-barbershop-dark">
+          <TabsList className="grid w-full grid-cols-3 bg-gray-800/90">
+            <TabsTrigger value="appointments" className="text-white data-[state=active]:bg-amber-500 data-[state=active]:text-black">
               Agendamentos
             </TabsTrigger>
-            <TabsTrigger value="services" className="text-white data-[state=active]:bg-barbershop-gold data-[state=active]:text-barbershop-dark">
+            <TabsTrigger value="services" className="text-white data-[state=active]:bg-amber-500 data-[state=active]:text-black">
               Serviços
             </TabsTrigger>
-            <TabsTrigger value="clients" className="text-white data-[state=active]:bg-barbershop-gold data-[state=active]:text-barbershop-dark">
+            <TabsTrigger value="clients" className="text-white data-[state=active]:bg-amber-500 data-[state=active]:text-black">
               Clientes
             </TabsTrigger>
           </TabsList>
 
           {/* Appointments Tab */}
           <TabsContent value="appointments">
-            <Card className="bg-barbershop-dark-light border-barbershop-gold/20">
+            <Card className="bg-gray-800/90 border-amber-500/20">
               <CardHeader>
                 <CardTitle className="text-white">Agendamentos</CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardDescription className="text-gray-300">
                   Gerencie todos os agendamentos
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-barbershop-gold/20">
-                      <TableHead className="text-gray-400">Cliente</TableHead>
-                      <TableHead className="text-gray-400">Barbeiro</TableHead>
-                      <TableHead className="text-gray-400">Serviço</TableHead>
-                      <TableHead className="text-gray-400">Data</TableHead>
-                      <TableHead className="text-gray-400">Horário</TableHead>
-                      <TableHead className="text-gray-400">Status</TableHead>
-                      <TableHead className="text-gray-400">Ações</TableHead>
+                    <TableRow className="border-amber-500/20">
+                      <TableHead className="text-gray-300">Cliente</TableHead>
+                      <TableHead className="text-gray-300">Barbeiro</TableHead>
+                      <TableHead className="text-gray-300">Serviço</TableHead>
+                      <TableHead className="text-gray-300">Data</TableHead>
+                      <TableHead className="text-gray-300">Horário</TableHead>
+                      <TableHead className="text-gray-300">Status</TableHead>
+                      <TableHead className="text-gray-300">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {appointments.map((appointment) => (
-                      <TableRow key={appointment.id} className="border-barbershop-gold/20">
+                      <TableRow key={appointment.id} className="border-amber-500/20">
                         <TableCell className="text-white">{getClientName(appointment.clientId)}</TableCell>
                         <TableCell className="text-white">{getBarberName(appointment.barberId)}</TableCell>
                         <TableCell className="text-white">{getServiceName(appointment.serviceId)}</TableCell>
@@ -229,10 +229,10 @@ const Admin = () => {
                             value={appointment.status}
                             onValueChange={(value: any) => updateAppointmentStatus(appointment.id, value)}
                           >
-                            <SelectTrigger className="w-32 bg-barbershop-dark border-barbershop-gold/30 text-white">
+                            <SelectTrigger className="w-32 bg-gray-700 border-amber-500/30 text-white">
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="bg-barbershop-dark border-barbershop-gold/30">
+                            <SelectContent className="bg-gray-700 border-amber-500/30">
                               <SelectItem value="agendado" className="text-white">Agendado</SelectItem>
                               <SelectItem value="concluido" className="text-white">Concluído</SelectItem>
                               <SelectItem value="cancelado" className="text-white">Cancelado</SelectItem>
@@ -249,26 +249,26 @@ const Admin = () => {
 
           {/* Services Tab */}
           <TabsContent value="services">
-            <Card className="bg-barbershop-dark-light border-barbershop-gold/20">
+            <Card className="bg-gray-800/90 border-amber-500/20">
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <div>
                     <CardTitle className="text-white">Serviços</CardTitle>
-                    <CardDescription className="text-gray-400">
+                    <CardDescription className="text-gray-300">
                       Gerencie os serviços oferecidos
                     </CardDescription>
                   </div>
                   <Dialog open={isAddServiceOpen} onOpenChange={setIsAddServiceOpen}>
                     <DialogTrigger asChild>
-                      <Button className="bg-barbershop-gold hover:bg-barbershop-gold/80 text-barbershop-dark">
+                      <Button className="bg-amber-500 hover:bg-amber-600 text-black">
                         <Plus className="h-4 w-4 mr-2" />
                         Novo Serviço
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="bg-barbershop-dark-light border-barbershop-gold/20">
+                    <DialogContent className="bg-gray-800 border-amber-500/20">
                       <DialogHeader>
                         <DialogTitle className="text-white">Adicionar Novo Serviço</DialogTitle>
-                        <DialogDescription className="text-gray-400">
+                        <DialogDescription className="text-gray-300">
                           Preencha os dados do novo serviço
                         </DialogDescription>
                       </DialogHeader>
@@ -279,7 +279,7 @@ const Admin = () => {
                             id="service-name"
                             value={newService.name}
                             onChange={(e) => setNewService(prev => ({ ...prev, name: e.target.value }))}
-                            className="bg-barbershop-dark border-barbershop-gold/30 text-white"
+                            className="bg-gray-700 border-amber-500/30 text-white"
                             placeholder="Ex: Corte Moderno"
                           />
                         </div>
@@ -290,7 +290,7 @@ const Admin = () => {
                             type="number"
                             value={newService.price}
                             onChange={(e) => setNewService(prev => ({ ...prev, price: e.target.value }))}
-                            className="bg-barbershop-dark border-barbershop-gold/30 text-white"
+                            className="bg-gray-700 border-amber-500/30 text-white"
                             placeholder="30"
                           />
                         </div>
@@ -301,11 +301,11 @@ const Admin = () => {
                             type="number"
                             value={newService.duration}
                             onChange={(e) => setNewService(prev => ({ ...prev, duration: e.target.value }))}
-                            className="bg-barbershop-dark border-barbershop-gold/30 text-white"
+                            className="bg-gray-700 border-amber-500/30 text-white"
                             placeholder="45"
                           />
                         </div>
-                        <Button type="submit" className="w-full bg-barbershop-gold hover:bg-barbershop-gold/80 text-barbershop-dark">
+                        <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black">
                           Adicionar Serviço
                         </Button>
                       </form>
@@ -316,10 +316,10 @@ const Admin = () => {
               <CardContent>
                 <div className="grid gap-4">
                   {services.map((service) => (
-                    <div key={service.id} className="flex items-center justify-between p-4 border border-barbershop-gold/20 rounded-lg">
+                    <div key={service.id} className="flex items-center justify-between p-4 border border-amber-500/20 rounded-lg">
                       <div>
                         <h3 className="text-white font-semibold">{service.name}</h3>
-                        <p className="text-gray-400">R$ {service.price} • {service.duration} minutos</p>
+                        <p className="text-gray-300">R$ {service.price} • {service.duration} minutos</p>
                       </div>
                       <div className="flex space-x-2">
                         <Dialog>
@@ -327,13 +327,13 @@ const Admin = () => {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              className="border-barbershop-gold/30 text-barbershop-gold hover:bg-barbershop-gold hover:text-barbershop-dark"
+                              className="border-amber-500/30 text-amber-500 hover:bg-amber-500 hover:text-black"
                               onClick={() => setEditingService(service)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>
-                          <DialogContent className="bg-barbershop-dark-light border-barbershop-gold/20">
+                          <DialogContent className="bg-gray-800 border-amber-500/20">
                             <DialogHeader>
                               <DialogTitle className="text-white">Editar Serviço</DialogTitle>
                             </DialogHeader>
@@ -344,7 +344,7 @@ const Admin = () => {
                                   <Input
                                     value={editingService.name}
                                     onChange={(e) => setEditingService(prev => ({ ...prev, name: e.target.value }))}
-                                    className="bg-barbershop-dark border-barbershop-gold/30 text-white"
+                                    className="bg-gray-700 border-amber-500/30 text-white"
                                   />
                                 </div>
                                 <div>
@@ -353,7 +353,7 @@ const Admin = () => {
                                     type="number"
                                     value={editingService.price}
                                     onChange={(e) => setEditingService(prev => ({ ...prev, price: e.target.value }))}
-                                    className="bg-barbershop-dark border-barbershop-gold/30 text-white"
+                                    className="bg-gray-700 border-amber-500/30 text-white"
                                   />
                                 </div>
                                 <div>
@@ -362,10 +362,10 @@ const Admin = () => {
                                     type="number"
                                     value={editingService.duration}
                                     onChange={(e) => setEditingService(prev => ({ ...prev, duration: e.target.value }))}
-                                    className="bg-barbershop-dark border-barbershop-gold/30 text-white"
+                                    className="bg-gray-700 border-amber-500/30 text-white"
                                   />
                                 </div>
-                                <Button type="submit" className="w-full bg-barbershop-gold hover:bg-barbershop-gold/80 text-barbershop-dark">
+                                <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black">
                                   Salvar Alterações
                                 </Button>
                               </form>
@@ -389,26 +389,26 @@ const Admin = () => {
 
           {/* Clients Tab */}
           <TabsContent value="clients">
-            <Card className="bg-barbershop-dark-light border-barbershop-gold/20">
+            <Card className="bg-gray-800/90 border-amber-500/20">
               <CardHeader>
                 <CardTitle className="text-white">Clientes</CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardDescription className="text-gray-300">
                   Lista de todos os clientes cadastrados
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-barbershop-gold/20">
-                      <TableHead className="text-gray-400">Nome</TableHead>
-                      <TableHead className="text-gray-400">Telefone</TableHead>
-                      <TableHead className="text-gray-400">E-mail</TableHead>
-                      <TableHead className="text-gray-400">Agendamentos</TableHead>
+                    <TableRow className="border-amber-500/20">
+                      <TableHead className="text-gray-300">Nome</TableHead>
+                      <TableHead className="text-gray-300">Telefone</TableHead>
+                      <TableHead className="text-gray-300">E-mail</TableHead>
+                      <TableHead className="text-gray-300">Agendamentos</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {clients.map((client) => (
-                      <TableRow key={client.id} className="border-barbershop-gold/20">
+                      <TableRow key={client.id} className="border-amber-500/20">
                         <TableCell className="text-white">{client.name}</TableCell>
                         <TableCell className="text-white">{client.phone}</TableCell>
                         <TableCell className="text-white">{client.email || '-'}</TableCell>
