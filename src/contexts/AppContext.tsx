@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface Service {
@@ -32,11 +31,25 @@ export interface Appointment {
   status: 'agendado' | 'concluido' | 'cancelado';
 }
 
+export interface Raffle {
+  id: string;
+  title: string;
+  description: string;
+  prize: string;
+  startDate: string;
+  endDate: string;
+  maxParticipants: number;
+  participants: string[];
+  status: 'ativo' | 'encerrado' | 'sorteado';
+  winner?: string;
+}
+
 interface AppContextType {
   services: Service[];
   barbers: Barber[];
   clients: Client[];
   appointments: Appointment[];
+  raffles: Raffle[];
   addService: (service: Omit<Service, 'id'>) => void;
   updateService: (id: string, service: Partial<Service>) => void;
   deleteService: (id: string) => void;
@@ -46,6 +59,11 @@ interface AppContextType {
   addClient: (client: Omit<Client, 'id'>) => void;
   addAppointment: (appointment: Omit<Appointment, 'id'>) => void;
   updateAppointmentStatus: (id: string, status: Appointment['status']) => void;
+  addRaffle: (raffle: Omit<Raffle, 'id' | 'participants' | 'status'>) => void;
+  updateRaffle: (id: string, raffle: Partial<Raffle>) => void;
+  deleteRaffle: (id: string) => void;
+  participateInRaffle: (raffleId: string, participantName: string, participantPhone: string) => boolean;
+  drawRaffleWinner: (raffleId: string) => string | null;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -74,12 +92,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [clients, setClients] = useState<Client[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [raffles, setRaffles] = useState<Raffle[]>([]);
 
   useEffect(() => {
     const savedClients = localStorage.getItem('barbershop-clients');
     const savedAppointments = localStorage.getItem('barbershop-appointments');
     const savedServices = localStorage.getItem('barbershop-services');
     const savedBarbers = localStorage.getItem('barbershop-barbers');
+    const savedRaffles = localStorage.getItem('barbershop-raffles');
 
     if (savedClients) {
       setClients(JSON.parse(savedClients));
@@ -92,6 +112,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     if (savedBarbers) {
       setBarbers(JSON.parse(savedBarbers));
+    }
+    if (savedRaffles) {
+      setRaffles(JSON.parse(savedRaffles));
     }
   }, []);
 
@@ -110,6 +133,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem('barbershop-barbers', JSON.stringify(barbers));
   }, [barbers]);
+
+  useEffect(() => {
+    localStorage.setItem('barbershop-raffles', JSON.stringify(raffles));
+  }, [raffles]);
 
   const addService = (service: Omit<Service, 'id'>) => {
     const newService = { ...service, id: Date.now().toString() };
@@ -157,12 +184,64 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     ));
   };
 
+  const addRaffle = (raffle: Omit<Raffle, 'id' | 'participants' | 'status'>) => {
+    const newRaffle = { 
+      ...raffle, 
+      id: Date.now().toString(),
+      participants: [],
+      status: 'ativo' as const
+    };
+    setRaffles(prev => [...prev, newRaffle]);
+  };
+
+  const updateRaffle = (id: string, updatedRaffle: Partial<Raffle>) => {
+    setRaffles(prev => prev.map(raffle => 
+      raffle.id === id ? { ...raffle, ...updatedRaffle } : raffle
+    ));
+  };
+
+  const deleteRaffle = (id: string) => {
+    setRaffles(prev => prev.filter(raffle => raffle.id !== id));
+  };
+
+  const participateInRaffle = (raffleId: string, participantName: string, participantPhone: string) => {
+    const raffle = raffles.find(r => r.id === raffleId);
+    if (!raffle || raffle.status !== 'ativo') return false;
+    if (raffle.participants.length >= raffle.maxParticipants) return false;
+    if (new Date() > new Date(raffle.endDate)) return false;
+
+    const participantKey = `${participantName}-${participantPhone}`;
+    if (raffle.participants.includes(participantKey)) return false;
+
+    updateRaffle(raffleId, {
+      participants: [...raffle.participants, participantKey]
+    });
+
+    return true;
+  };
+
+  const drawRaffleWinner = (raffleId: string) => {
+    const raffle = raffles.find(r => r.id === raffleId);
+    if (!raffle || raffle.participants.length === 0) return null;
+
+    const randomIndex = Math.floor(Math.random() * raffle.participants.length);
+    const winner = raffle.participants[randomIndex];
+
+    updateRaffle(raffleId, {
+      winner,
+      status: 'sorteado'
+    });
+
+    return winner;
+  };
+
   return (
     <AppContext.Provider value={{
       services,
       barbers,
       clients,
       appointments,
+      raffles,
       addService,
       updateService,
       deleteService,
@@ -172,6 +251,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addClient,
       addAppointment,
       updateAppointmentStatus,
+      addRaffle,
+      updateRaffle,
+      deleteRaffle,
+      participateInRaffle,
+      drawRaffleWinner,
     }}>
       {children}
     </AppContext.Provider>

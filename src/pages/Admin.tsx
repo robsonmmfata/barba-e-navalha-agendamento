@@ -13,7 +13,8 @@ import { Link } from "react-router-dom";
 import { useApp } from "@/contexts/AppContext";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Scissors, ArrowLeft, Plus, Edit, Trash2, Users, Calendar, DollarSign, User } from "lucide-react";
+import { Scissors, ArrowLeft, Plus, Edit, Trash2, Users, Calendar, DollarSign, User, Gift } from "lucide-react";
+import RaffleManagement from "@/components/RaffleManagement";
 
 const Admin = () => {
   const { 
@@ -21,6 +22,7 @@ const Admin = () => {
     clients, 
     appointments, 
     barbers,
+    raffles,
     addService, 
     updateService, 
     deleteService,
@@ -178,7 +180,7 @@ const Admin = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid md:grid-cols-5 gap-6 mb-8">
+        <div className="grid md:grid-cols-6 gap-6 mb-8">
           <Card className="bg-gray-800/90 border-amber-500/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-300">Total de Clientes</CardTitle>
@@ -233,11 +235,21 @@ const Admin = () => {
               </div>
             </CardContent>
           </Card>
+
+          <Card className="bg-gray-800/90 border-amber-500/20">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-300">Sorteios Ativos</CardTitle>
+              <Gift className="h-4 w-4 text-amber-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">{raffles.filter(r => r.status === 'ativo').length}</div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Tabs */}
         <Tabs defaultValue="appointments" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4 bg-gray-800/90">
+          <TabsList className="grid w-full grid-cols-5 bg-gray-800/90">
             <TabsTrigger value="appointments" className="text-white data-[state=active]:bg-amber-500 data-[state=active]:text-black">
               Agendamentos
             </TabsTrigger>
@@ -246,6 +258,9 @@ const Admin = () => {
             </TabsTrigger>
             <TabsTrigger value="services" className="text-white data-[state=active]:bg-amber-500 data-[state=active]:text-black">
               Serviços
+            </TabsTrigger>
+            <TabsTrigger value="raffles" className="text-white data-[state=active]:bg-amber-500 data-[state=active]:text-black">
+              Sorteios
             </TabsTrigger>
             <TabsTrigger value="clients" className="text-white data-[state=active]:bg-amber-500 data-[state=active]:text-black">
               Clientes
@@ -586,6 +601,11 @@ const Admin = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Raffles Tab */}
+          <TabsContent value="raffles">
+            <RaffleManagement />
           </TabsContent>
 
           {/* Clients Tab */}
