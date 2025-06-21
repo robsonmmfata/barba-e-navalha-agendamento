@@ -37,56 +37,85 @@ const RaffleManagement = () => {
     e.preventDefault();
     
     if (!newRaffle.title || !newRaffle.prize || !newRaffle.startDate || !newRaffle.endDate || !newRaffle.maxParticipants) {
-      toast.error("Por favor, preencha todos os campos");
+      toast.error("Por favor, preencha todos os campos obrigatórios");
       return;
     }
 
-    addRaffle({
-      title: newRaffle.title,
-      description: newRaffle.description,
-      prize: newRaffle.prize,
-      startDate: newRaffle.startDate,
-      endDate: newRaffle.endDate,
-      maxParticipants: Number(newRaffle.maxParticipants),
-    });
+    const startDate = new Date(newRaffle.startDate);
+    const endDate = new Date(newRaffle.endDate);
+    
+    if (endDate <= startDate) {
+      toast.error("A data de fim deve ser posterior à data de início");
+      return;
+    }
 
-    toast.success("Sorteio criado com sucesso!");
-    setNewRaffle({ title: "", description: "", prize: "", startDate: "", endDate: "", maxParticipants: "" });
-    setIsAddRaffleOpen(false);
+    if (Number(newRaffle.maxParticipants) <= 0) {
+      toast.error("O número máximo de participantes deve ser maior que zero");
+      return;
+    }
+
+    try {
+      addRaffle({
+        title: newRaffle.title,
+        description: newRaffle.description || "",
+        prize: newRaffle.prize,
+        startDate: newRaffle.startDate,
+        endDate: newRaffle.endDate,
+        maxParticipants: Number(newRaffle.maxParticipants),
+      });
+
+      toast.success("Sorteio criado com sucesso!");
+      setNewRaffle({ title: "", description: "", prize: "", startDate: "", endDate: "", maxParticipants: "" });
+      setIsAddRaffleOpen(false);
+    } catch (error) {
+      toast.error("Erro ao criar sorteio. Tente novamente.");
+    }
   };
 
   const handleUpdateRaffle = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!editingRaffle || !editingRaffle.title || !editingRaffle.prize) {
-      toast.error("Por favor, preencha todos os campos");
+      toast.error("Por favor, preencha todos os campos obrigatórios");
       return;
     }
 
-    updateRaffle(editingRaffle.id, {
-      title: editingRaffle.title,
-      description: editingRaffle.description,
-      prize: editingRaffle.prize,
-      startDate: editingRaffle.startDate,
-      endDate: editingRaffle.endDate,
-      maxParticipants: Number(editingRaffle.maxParticipants),
-    });
+    try {
+      updateRaffle(editingRaffle.id, {
+        title: editingRaffle.title,
+        description: editingRaffle.description,
+        prize: editingRaffle.prize,
+        startDate: editingRaffle.startDate,
+        endDate: editingRaffle.endDate,
+        maxParticipants: Number(editingRaffle.maxParticipants),
+      });
 
-    toast.success("Sorteio atualizado com sucesso!");
-    setEditingRaffle(null);
+      toast.success("Sorteio atualizado com sucesso!");
+      setEditingRaffle(null);
+    } catch (error) {
+      toast.error("Erro ao atualizar sorteio. Tente novamente.");
+    }
   };
 
   const handleDeleteRaffle = (id: string) => {
-    deleteRaffle(id);
-    toast.success("Sorteio removido com sucesso!");
+    try {
+      deleteRaffle(id);
+      toast.success("Sorteio removido com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao remover sorteio. Tente novamente.");
+    }
   };
 
   const handleDrawWinner = (raffleId: string) => {
-    const winner = drawRaffleWinner(raffleId);
-    if (winner) {
-      toast.success(`Ganhador sorteado: ${winner.split('-')[0]}`);
-    } else {
-      toast.error("Não foi possível sortear um ganhador");
+    try {
+      const winner = drawRaffleWinner(raffleId);
+      if (winner) {
+        toast.success(`Ganhador sorteado: ${winner.split('-')[0]}`);
+      } else {
+        toast.error("Não foi possível sortear um ganhador. Verifique se há participantes.");
+      }
+    } catch (error) {
+      toast.error("Erro ao sortear ganhador. Tente novamente.");
     }
   };
 
@@ -123,7 +152,7 @@ const RaffleManagement = () => {
                 Novo Sorteio
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-gray-800 border-amber-500/20">
+            <DialogContent className="bg-gray-800 border-amber-500/20 max-w-md">
               <DialogHeader>
                 <DialogTitle className="text-white">Criar Novo Sorteio</DialogTitle>
                 <DialogDescription className="text-gray-300">
@@ -132,13 +161,16 @@ const RaffleManagement = () => {
               </DialogHeader>
               <form onSubmit={handleAddRaffle} className="space-y-4">
                 <div>
-                  <Label htmlFor="raffle-title" className="text-white">Título do Sorteio</Label>
+                  <Label htmlFor="raffle-title" className="text-white">
+                    Título do Sorteio *
+                  </Label>
                   <Input
                     id="raffle-title"
                     value={newRaffle.title}
                     onChange={(e) => setNewRaffle(prev => ({ ...prev, title: e.target.value }))}
                     className="bg-gray-700 border-amber-500/30 text-white"
                     placeholder="Ex: Sorteio Corte Grátis"
+                    required
                   />
                 </div>
                 <div>
@@ -149,49 +181,63 @@ const RaffleManagement = () => {
                     onChange={(e) => setNewRaffle(prev => ({ ...prev, description: e.target.value }))}
                     className="bg-gray-700 border-amber-500/30 text-white"
                     placeholder="Descreva o sorteio..."
+                    rows={3}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="raffle-prize" className="text-white">Prêmio</Label>
+                  <Label htmlFor="raffle-prize" className="text-white">
+                    Prêmio *
+                  </Label>
                   <Input
                     id="raffle-prize"
                     value={newRaffle.prize}
                     onChange={(e) => setNewRaffle(prev => ({ ...prev, prize: e.target.value }))}
                     className="bg-gray-700 border-amber-500/30 text-white"
                     placeholder="Ex: Corte + Barba Grátis"
+                    required
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="raffle-start" className="text-white">Data de Início</Label>
+                    <Label htmlFor="raffle-start" className="text-white">
+                      Data de Início *
+                    </Label>
                     <Input
                       id="raffle-start"
                       type="datetime-local"
                       value={newRaffle.startDate}
                       onChange={(e) => setNewRaffle(prev => ({ ...prev, startDate: e.target.value }))}
                       className="bg-gray-700 border-amber-500/30 text-white"
+                      required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="raffle-end" className="text-white">Data de Fim</Label>
+                    <Label htmlFor="raffle-end" className="text-white">
+                      Data de Fim *
+                    </Label>
                     <Input
                       id="raffle-end"
                       type="datetime-local"
                       value={newRaffle.endDate}
                       onChange={(e) => setNewRaffle(prev => ({ ...prev, endDate: e.target.value }))}
                       className="bg-gray-700 border-amber-500/30 text-white"
+                      required
                     />
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="raffle-max" className="text-white">Máximo de Participantes</Label>
+                  <Label htmlFor="raffle-max" className="text-white">
+                    Máximo de Participantes *
+                  </Label>
                   <Input
                     id="raffle-max"
                     type="number"
+                    min="1"
                     value={newRaffle.maxParticipants}
                     onChange={(e) => setNewRaffle(prev => ({ ...prev, maxParticipants: e.target.value }))}
                     className="bg-gray-700 border-amber-500/30 text-white"
                     placeholder="100"
+                    required
                   />
                 </div>
                 <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black">
@@ -204,135 +250,145 @@ const RaffleManagement = () => {
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
-          {raffles.map((raffle) => (
-            <div key={raffle.id} className="p-4 border border-amber-500/20 rounded-lg">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h3 className="text-white font-semibold text-lg">{raffle.title}</h3>
-                  <p className="text-gray-300 text-sm mb-2">{raffle.description}</p>
-                  <div className="flex items-center gap-4 text-sm text-gray-400">
-                    <span className="flex items-center gap-1">
-                      <Trophy className="h-4 w-4" />
-                      {raffle.prize}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      {raffle.participants.length}/{raffle.maxParticipants}
-                    </span>
+          {raffles.length === 0 ? (
+            <div className="text-center py-8">
+              <Gift className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-400">Nenhum sorteio criado ainda</p>
+              <p className="text-gray-500 text-sm">Clique em "Novo Sorteio" para começar</p>
+            </div>
+          ) : (
+            raffles.map((raffle) => (
+              <div key={raffle.id} className="p-4 border border-amber-500/20 rounded-lg">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-white font-semibold text-lg">{raffle.title}</h3>
+                    <p className="text-gray-300 text-sm mb-2">{raffle.description}</p>
+                    <div className="flex items-center gap-4 text-sm text-gray-400">
+                      <span className="flex items-center gap-1">
+                        <Trophy className="h-4 w-4" />
+                        {raffle.prize}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Users className="h-4 w-4" />
+                        {raffle.participants.length}/{raffle.maxParticipants}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge className={`${getStatusColor(raffle.status)} text-white`}>
+                        {raffle.status}
+                      </Badge>
+                      <span className="text-xs text-gray-400">
+                        {format(new Date(raffle.startDate), "dd/MM/yyyy", { locale: ptBR })} - {format(new Date(raffle.endDate), "dd/MM/yyyy", { locale: ptBR })}
+                      </span>
+                    </div>
+                    {raffle.winner && (
+                      <p className="text-amber-500 text-sm mt-2">
+                        🏆 Ganhador: {raffle.winner.split('-')[0]}
+                      </p>
+                    )}
                   </div>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge className={`${getStatusColor(raffle.status)} text-white`}>
-                      {raffle.status}
-                    </Badge>
-                    <span className="text-xs text-gray-400">
-                      {format(new Date(raffle.startDate), "dd/MM/yyyy", { locale: ptBR })} - {format(new Date(raffle.endDate), "dd/MM/yyyy", { locale: ptBR })}
-                    </span>
-                  </div>
-                  {raffle.winner && (
-                    <p className="text-amber-500 text-sm mt-2">
-                      🏆 Ganhador: {raffle.winner.split('-')[0]}
-                    </p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-2">
-                  {raffle.status === 'ativo' && raffle.participants.length > 0 && (
-                    <Button 
-                      size="sm"
-                      className="bg-blue-500 hover:bg-blue-600 text-white"
-                      onClick={() => handleDrawWinner(raffle.id)}
-                    >
-                      <Trophy className="h-4 w-4 mr-1" />
-                      Sortear
-                    </Button>
-                  )}
-                  <Dialog>
-                    <DialogTrigger asChild>
+                  <div className="flex flex-col gap-2">
+                    {raffle.status === 'ativo' && raffle.participants.length > 0 && (
                       <Button 
-                        variant="outline" 
                         size="sm"
-                        className="border-amber-500/30 text-amber-500 hover:bg-amber-500 hover:text-black"
-                        onClick={() => setEditingRaffle(raffle)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white"
+                        onClick={() => handleDrawWinner(raffle.id)}
                       >
-                        <Edit className="h-4 w-4" />
+                        <Trophy className="h-4 w-4 mr-1" />
+                        Sortear
                       </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-gray-800 border-amber-500/20">
-                      <DialogHeader>
-                        <DialogTitle className="text-white">Editar Sorteio</DialogTitle>
-                      </DialogHeader>
-                      {editingRaffle && (
-                        <form onSubmit={handleUpdateRaffle} className="space-y-4">
-                          <div>
-                            <Label className="text-white">Título do Sorteio</Label>
-                            <Input
-                              value={editingRaffle.title}
-                              onChange={(e) => setEditingRaffle(prev => ({ ...prev, title: e.target.value }))}
-                              className="bg-gray-700 border-amber-500/30 text-white"
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-white">Descrição</Label>
-                            <Textarea
-                              value={editingRaffle.description}
-                              onChange={(e) => setEditingRaffle(prev => ({ ...prev, description: e.target.value }))}
-                              className="bg-gray-700 border-amber-500/30 text-white"
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-white">Prêmio</Label>
-                            <Input
-                              value={editingRaffle.prize}
-                              onChange={(e) => setEditingRaffle(prev => ({ ...prev, prize: e.target.value }))}
-                              className="bg-gray-700 border-amber-500/30 text-white"
-                            />
-                          </div>
-                          <div className="grid grid-cols-2 gap-4">
+                    )}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="border-amber-500/30 text-amber-500 hover:bg-amber-500 hover:text-black"
+                          onClick={() => setEditingRaffle(raffle)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-gray-800 border-amber-500/20 max-w-md">
+                        <DialogHeader>
+                          <DialogTitle className="text-white">Editar Sorteio</DialogTitle>
+                        </DialogHeader>
+                        {editingRaffle && (
+                          <form onSubmit={handleUpdateRaffle} className="space-y-4">
                             <div>
-                              <Label className="text-white">Data de Início</Label>
+                              <Label className="text-white">Título do Sorteio</Label>
                               <Input
-                                type="datetime-local"
-                                value={editingRaffle.startDate}
-                                onChange={(e) => setEditingRaffle(prev => ({ ...prev, startDate: e.target.value }))}
+                                value={editingRaffle.title}
+                                onChange={(e) => setEditingRaffle(prev => ({ ...prev, title: e.target.value }))}
                                 className="bg-gray-700 border-amber-500/30 text-white"
                               />
                             </div>
                             <div>
-                              <Label className="text-white">Data de Fim</Label>
+                              <Label className="text-white">Descrição</Label>
+                              <Textarea
+                                value={editingRaffle.description}
+                                onChange={(e) => setEditingRaffle(prev => ({ ...prev, description: e.target.value }))}
+                                className="bg-gray-700 border-amber-500/30 text-white"
+                                rows={3}
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-white">Prêmio</Label>
                               <Input
-                                type="datetime-local"
-                                value={editingRaffle.endDate}
-                                onChange={(e) => setEditingRaffle(prev => ({ ...prev, endDate: e.target.value }))}
+                                value={editingRaffle.prize}
+                                onChange={(e) => setEditingRaffle(prev => ({ ...prev, prize: e.target.value }))}
                                 className="bg-gray-700 border-amber-500/30 text-white"
                               />
                             </div>
-                          </div>
-                          <div>
-                            <Label className="text-white">Máximo de Participantes</Label>
-                            <Input
-                              type="number"
-                              value={editingRaffle.maxParticipants}
-                              onChange={(e) => setEditingRaffle(prev => ({ ...prev, maxParticipants: e.target.value }))}
-                              className="bg-gray-700 border-amber-500/30 text-white"
-                            />
-                          </div>
-                          <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black">
-                            Salvar Alterações
-                          </Button>
-                        </form>
-                      )}
-                    </DialogContent>
-                  </Dialog>
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
-                    onClick={() => handleDeleteRaffle(raffle.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <Label className="text-white">Data de Início</Label>
+                                <Input
+                                  type="datetime-local"
+                                  value={editingRaffle.startDate}
+                                  onChange={(e) => setEditingRaffle(prev => ({ ...prev, startDate: e.target.value }))}
+                                  className="bg-gray-700 border-amber-500/30 text-white"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-white">Data de Fim</Label>
+                                <Input
+                                  type="datetime-local"
+                                  value={editingRaffle.endDate}
+                                  onChange={(e) => setEditingRaffle(prev => ({ ...prev, endDate: e.target.value }))}
+                                  className="bg-gray-700 border-amber-500/30 text-white"
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <Label className="text-white">Máximo de Participantes</Label>
+                              <Input
+                                type="number"
+                                min="1"
+                                value={editingRaffle.maxParticipants}
+                                onChange={(e) => setEditingRaffle(prev => ({ ...prev, maxParticipants: e.target.value }))}
+                                className="bg-gray-700 border-amber-500/30 text-white"
+                              />
+                            </div>
+                            <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black">
+                              Salvar Alterações
+                            </Button>
+                          </form>
+                        )}
+                      </DialogContent>
+                    </Dialog>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      onClick={() => handleDeleteRaffle(raffle.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </CardContent>
     </Card>

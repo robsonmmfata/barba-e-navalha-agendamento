@@ -19,10 +19,12 @@ const RaffleSection = () => {
     name: "",
     phone: "",
   });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const activeRaffles = raffles.filter(raffle => 
     raffle.status === 'ativo' && 
-    new Date() < new Date(raffle.endDate) &&
+    new Date() >= new Date(raffle.startDate) &&
+    new Date() <= new Date(raffle.endDate) &&
     raffle.participants.length < raffle.maxParticipants
   );
 
@@ -42,9 +44,15 @@ const RaffleSection = () => {
       toast.success("Participação confirmada! Boa sorte!");
       setParticipantData({ name: "", phone: "" });
       setSelectedRaffle(null);
+      setIsDialogOpen(false);
     } else {
       toast.error("Não foi possível participar. Verifique se você já está participando ou se o sorteio ainda está ativo.");
     }
+  };
+
+  const openParticipationDialog = (raffle: any) => {
+    setSelectedRaffle(raffle);
+    setIsDialogOpen(true);
   };
 
   if (activeRaffles.length === 0) return null;
@@ -97,55 +105,54 @@ const RaffleSection = () => {
                   </div>
                 </div>
 
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button 
-                      className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold"
-                      onClick={() => setSelectedRaffle(raffle)}
-                    >
-                      Participar do Sorteio
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="bg-gray-800 border-amber-500/20">
-                    <DialogHeader>
-                      <DialogTitle className="text-white">Participar do Sorteio</DialogTitle>
-                      <DialogDescription className="text-gray-300">
-                        Preencha seus dados para participar de: {raffle.title}
-                      </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleParticipate} className="space-y-4">
-                      <div>
-                        <Label htmlFor="participant-name" className="text-white">Nome Completo</Label>
-                        <Input
-                          id="participant-name"
-                          value={participantData.name}
-                          onChange={(e) => setParticipantData(prev => ({ ...prev, name: e.target.value }))}
-                          className="bg-gray-700 border-amber-500/30 text-white"
-                          placeholder="Seu nome completo"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="participant-phone" className="text-white">Telefone</Label>
-                        <Input
-                          id="participant-phone"
-                          value={participantData.phone}
-                          onChange={(e) => setParticipantData(prev => ({ ...prev, phone: e.target.value }))}
-                          className="bg-gray-700 border-amber-500/30 text-white"
-                          placeholder="(11) 99999-9999"
-                          required
-                        />
-                      </div>
-                      <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black">
-                        Confirmar Participação
-                      </Button>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+                <Button 
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold"
+                  onClick={() => openParticipationDialog(raffle)}
+                >
+                  Participar do Sorteio
+                </Button>
               </CardContent>
             </Card>
           ))}
         </div>
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="bg-gray-800 border-amber-500/20">
+            <DialogHeader>
+              <DialogTitle className="text-white">Participar do Sorteio</DialogTitle>
+              <DialogDescription className="text-gray-300">
+                Preencha seus dados para participar de: {selectedRaffle?.title}
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleParticipate} className="space-y-4">
+              <div>
+                <Label htmlFor="participant-name" className="text-white">Nome Completo</Label>
+                <Input
+                  id="participant-name"
+                  value={participantData.name}
+                  onChange={(e) => setParticipantData(prev => ({ ...prev, name: e.target.value }))}
+                  className="bg-gray-700 border-amber-500/30 text-white"
+                  placeholder="Seu nome completo"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="participant-phone" className="text-white">Telefone</Label>
+                <Input
+                  id="participant-phone"
+                  value={participantData.phone}
+                  onChange={(e) => setParticipantData(prev => ({ ...prev, phone: e.target.value }))}
+                  className="bg-gray-700 border-amber-500/30 text-white"
+                  placeholder="(11) 99999-9999"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black">
+                Confirmar Participação
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   );
