@@ -58,25 +58,25 @@ const RaffleSection = () => {
   if (activeRaffles.length === 0) return null;
 
   return (
-    <section className="py-20 bg-gradient-to-r from-amber-500/10 to-orange-500/10">
+    <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h3 className="text-4xl font-bold text-white mb-4 flex items-center justify-center gap-3">
+          <h3 className="text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
             <Gift className="h-10 w-10 text-amber-500" />
             Sorteios Ativos
           </h3>
-          <p className="text-secondary-foreground text-lg">Participe e concorra a prêmios incríveis!</p>
+          <p className="text-gray-600 text-lg">Participe e concorra a prêmios incríveis!</p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {activeRaffles.map((raffle, index) => (
-            <Card key={raffle.id} className="bg-card border-amber-500/20 hover-lift animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+            <Card key={raffle.id} className="bg-white border-amber-500/20 hover-lift animate-fade-in shadow-lg" style={{ animationDelay: `${index * 0.1}s` }}>
               <CardHeader className="text-center">
                 <div className="w-16 h-16 bg-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Gift className="h-8 w-8 text-black" />
                 </div>
-                <CardTitle className="text-card-foreground">{raffle.title}</CardTitle>
-                <CardDescription className="text-secondary-foreground">
+                <CardTitle className="text-gray-900">{raffle.title}</CardTitle>
+                <CardDescription className="text-gray-600">
                   {raffle.description}
                 </CardDescription>
               </CardHeader>
@@ -88,7 +88,7 @@ const RaffleSection = () => {
                   </Badge>
                 </div>
                 
-                <div className="space-y-2 text-sm text-gray-300">
+                <div className="space-y-2 text-sm text-gray-600">
                   <div className="flex items-center justify-between">
                     <span className="flex items-center gap-2">
                       <Users className="h-4 w-4" />
@@ -120,7 +120,7 @@ const RaffleSection = () => {
           <DialogContent className="bg-gray-800 border-amber-500/20">
             <DialogHeader>
               <DialogTitle className="text-white">Participar do Sorteio</DialogTitle>
-              <DialogDescription className="text-gray-300">
+              <DialogDescription className="text-white">
                 Preencha seus dados para participar de: {selectedRaffle?.title}
               </DialogDescription>
             </DialogHeader>
