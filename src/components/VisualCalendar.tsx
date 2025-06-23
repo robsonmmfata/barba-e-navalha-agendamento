@@ -102,7 +102,7 @@ const VisualCalendar = () => {
                             <User className="h-3 w-3" />
                             <span className="truncate">{barber?.name}</span>
                           </div>
-                          <Badge className="mt-1 text-[10px] bg-white/20" size="sm">
+                          <Badge className="mt-1 text-[10px] bg-white/20">
                             {appointment.status}
                           </Badge>
                         </div>
