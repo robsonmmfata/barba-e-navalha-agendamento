@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,11 +24,11 @@ const LoyaltyProgram = () => {
     if (!user) return { points: 0, totalSpent: 0, tier: 'bronze' as const };
 
     const userAppointments = appointments.filter(apt => 
-      apt.clientId === user.id && apt.status === 'concluido'
+      apt.client_id === user.id && apt.status === 'concluido'
     );
 
     const totalSpent = userAppointments.reduce((total, apt) => {
-      const service = services.find(s => s.id === apt.serviceId);
+      const service = services.find(s => s.id === apt.service_id);
       return total + (service?.price || 0);
     }, 0);
 
@@ -42,8 +41,6 @@ const LoyaltyProgram = () => {
 
     return { points, totalSpent, tier };
   };
-
-  const { points, totalSpent, tier } = calculateUserPoints();
 
   const getTierBenefits = (tier: string) => {
     const benefits = {
@@ -85,6 +82,8 @@ const LoyaltyProgram = () => {
     // In a real app, this would update the user's points in the database
     toast.success(`${reward} resgatado com sucesso!`);
   };
+
+  const { points, totalSpent, tier } = calculateUserPoints();
 
   if (!user) {
     return (

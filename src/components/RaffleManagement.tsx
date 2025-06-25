@@ -28,28 +28,28 @@ const RaffleManagement = () => {
     title: "",
     description: "",
     prize: "",
-    startDate: "",
-    endDate: "",
-    maxParticipants: "",
+    start_date: "",
+    end_date: "",
+    max_participants: "",
   });
 
   const handleAddRaffle = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!newRaffle.title || !newRaffle.prize || !newRaffle.startDate || !newRaffle.endDate || !newRaffle.maxParticipants) {
+    if (!newRaffle.title || !newRaffle.prize || !newRaffle.start_date || !newRaffle.end_date || !newRaffle.max_participants) {
       toast.error("Por favor, preencha todos os campos obrigatórios");
       return;
     }
 
-    const startDate = new Date(newRaffle.startDate);
-    const endDate = new Date(newRaffle.endDate);
+    const startDate = new Date(newRaffle.start_date);
+    const endDate = new Date(newRaffle.end_date);
     
     if (endDate <= startDate) {
       toast.error("A data de fim deve ser posterior à data de início");
       return;
     }
 
-    if (Number(newRaffle.maxParticipants) <= 0) {
+    if (Number(newRaffle.max_participants) <= 0) {
       toast.error("O número máximo de participantes deve ser maior que zero");
       return;
     }
@@ -59,13 +59,13 @@ const RaffleManagement = () => {
         title: newRaffle.title,
         description: newRaffle.description || "",
         prize: newRaffle.prize,
-        startDate: newRaffle.startDate,
-        endDate: newRaffle.endDate,
-        maxParticipants: Number(newRaffle.maxParticipants),
+        start_date: newRaffle.start_date,
+        end_date: newRaffle.end_date,
+        max_participants: Number(newRaffle.max_participants),
       });
 
       toast.success("Sorteio criado com sucesso!");
-      setNewRaffle({ title: "", description: "", prize: "", startDate: "", endDate: "", maxParticipants: "" });
+      setNewRaffle({ title: "", description: "", prize: "", start_date: "", end_date: "", max_participants: "" });
       setIsAddRaffleOpen(false);
     } catch (error) {
       toast.error("Erro ao criar sorteio. Tente novamente.");
@@ -85,9 +85,9 @@ const RaffleManagement = () => {
         title: editingRaffle.title,
         description: editingRaffle.description,
         prize: editingRaffle.prize,
-        startDate: editingRaffle.startDate,
-        endDate: editingRaffle.endDate,
-        maxParticipants: Number(editingRaffle.maxParticipants),
+        start_date: editingRaffle.start_date,
+        end_date: editingRaffle.end_date,
+        max_participants: Number(editingRaffle.max_participants),
       });
 
       toast.success("Sorteio atualizado com sucesso!");
@@ -106,9 +106,9 @@ const RaffleManagement = () => {
     }
   };
 
-  const handleDrawWinner = (raffleId: string) => {
+  const handleDrawWinner = async (raffleId: string) => {
     try {
-      const winner = drawRaffleWinner(raffleId);
+      const winner = await drawRaffleWinner(raffleId);
       if (winner) {
         toast.success(`Ganhador sorteado: ${winner.split('-')[0]}`);
       } else {
@@ -205,8 +205,8 @@ const RaffleManagement = () => {
                     <Input
                       id="raffle-start"
                       type="datetime-local"
-                      value={newRaffle.startDate}
-                      onChange={(e) => setNewRaffle(prev => ({ ...prev, startDate: e.target.value }))}
+                      value={newRaffle.start_date}
+                      onChange={(e) => setNewRaffle(prev => ({ ...prev, start_date: e.target.value }))}
                       className="bg-gray-700 border-amber-500/30 text-white"
                       required
                     />
@@ -218,8 +218,8 @@ const RaffleManagement = () => {
                     <Input
                       id="raffle-end"
                       type="datetime-local"
-                      value={newRaffle.endDate}
-                      onChange={(e) => setNewRaffle(prev => ({ ...prev, endDate: e.target.value }))}
+                      value={newRaffle.end_date}
+                      onChange={(e) => setNewRaffle(prev => ({ ...prev, end_date: e.target.value }))}
                       className="bg-gray-700 border-amber-500/30 text-white"
                       required
                     />
@@ -233,8 +233,8 @@ const RaffleManagement = () => {
                     id="raffle-max"
                     type="number"
                     min="1"
-                    value={newRaffle.maxParticipants}
-                    onChange={(e) => setNewRaffle(prev => ({ ...prev, maxParticipants: e.target.value }))}
+                    value={newRaffle.max_participants}
+                    onChange={(e) => setNewRaffle(prev => ({ ...prev, max_participants: e.target.value }))}
                     className="bg-gray-700 border-amber-500/30 text-white"
                     placeholder="100"
                     required
@@ -270,7 +270,7 @@ const RaffleManagement = () => {
                       </span>
                       <span className="flex items-center gap-1">
                         <Users className="h-4 w-4" />
-                        {raffle.participants.length}/{raffle.maxParticipants}
+                        {raffle.participants.length}/{raffle.max_participants}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
@@ -278,7 +278,7 @@ const RaffleManagement = () => {
                         {raffle.status}
                       </Badge>
                       <span className="text-xs text-gray-400">
-                        {format(new Date(raffle.startDate), "dd/MM/yyyy", { locale: ptBR })} - {format(new Date(raffle.endDate), "dd/MM/yyyy", { locale: ptBR })}
+                        {format(new Date(raffle.start_date), "dd/MM/yyyy", { locale: ptBR })} - {format(new Date(raffle.end_date), "dd/MM/yyyy", { locale: ptBR })}
                       </span>
                     </div>
                     {raffle.winner && (
@@ -345,8 +345,8 @@ const RaffleManagement = () => {
                                 <Label className="text-white">Data de Início</Label>
                                 <Input
                                   type="datetime-local"
-                                  value={editingRaffle.startDate}
-                                  onChange={(e) => setEditingRaffle(prev => ({ ...prev, startDate: e.target.value }))}
+                                  value={editingRaffle.start_date}
+                                  onChange={(e) => setEditingRaffle(prev => ({ ...prev, start_date: e.target.value }))}
                                   className="bg-gray-700 border-amber-500/30 text-white"
                                 />
                               </div>
@@ -354,8 +354,8 @@ const RaffleManagement = () => {
                                 <Label className="text-white">Data de Fim</Label>
                                 <Input
                                   type="datetime-local"
-                                  value={editingRaffle.endDate}
-                                  onChange={(e) => setEditingRaffle(prev => ({ ...prev, endDate: e.target.value }))}
+                                  value={editingRaffle.end_date}
+                                  onChange={(e) => setEditingRaffle(prev => ({ ...prev, end_date: e.target.value }))}
                                   className="bg-gray-700 border-amber-500/30 text-white"
                                 />
                               </div>
@@ -365,8 +365,8 @@ const RaffleManagement = () => {
                               <Input
                                 type="number"
                                 min="1"
-                                value={editingRaffle.maxParticipants}
-                                onChange={(e) => setEditingRaffle(prev => ({ ...prev, maxParticipants: e.target.value }))}
+                                value={editingRaffle.max_participants}
+                                onChange={(e) => setEditingRaffle(prev => ({ ...prev, max_participants: e.target.value }))}
                                 className="bg-gray-700 border-amber-500/30 text-white"
                               />
                             </div>

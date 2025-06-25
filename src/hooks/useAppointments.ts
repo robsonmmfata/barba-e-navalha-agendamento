@@ -26,7 +26,10 @@ export const useAppointments = () => {
         .order('time', { ascending: true });
 
       if (error) throw error;
-      setAppointments(data || []);
+      setAppointments(data?.map(item => ({
+        ...item,
+        status: item.status as 'agendado' | 'concluido' | 'cancelado'
+      })) || []);
     } catch (error) {
       console.error('Error fetching appointments:', error);
       toast.error('Erro ao carregar agendamentos');
@@ -44,9 +47,13 @@ export const useAppointments = () => {
         .single();
 
       if (error) throw error;
-      setAppointments(prev => [...prev, data]);
+      const newAppointment: Appointment = {
+        ...data,
+        status: data.status as 'agendado' | 'concluido' | 'cancelado'
+      };
+      setAppointments(prev => [...prev, newAppointment]);
       toast.success('Agendamento criado com sucesso!');
-      return data;
+      return newAppointment;
     } catch (error) {
       console.error('Error adding appointment:', error);
       toast.error('Erro ao criar agendamento');
@@ -64,11 +71,15 @@ export const useAppointments = () => {
         .single();
 
       if (error) throw error;
+      const updatedAppointment: Appointment = {
+        ...data,
+        status: data.status as 'agendado' | 'concluido' | 'cancelado'
+      };
       setAppointments(prev => prev.map(appointment =>
-        appointment.id === id ? data : appointment
+        appointment.id === id ? updatedAppointment : appointment
       ));
       toast.success('Status do agendamento atualizado!');
-      return data;
+      return updatedAppointment;
     } catch (error) {
       console.error('Error updating appointment status:', error);
       toast.error('Erro ao atualizar agendamento');

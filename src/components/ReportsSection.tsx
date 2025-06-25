@@ -11,7 +11,7 @@ const ReportsSection = () => {
   // Revenue calculations
   const completedAppointments = appointments.filter(apt => apt.status === 'concluido');
   const totalRevenue = completedAppointments.reduce((total, apt) => {
-    const service = services.find(s => s.id === apt.serviceId);
+    const service = services.find(s => s.id === apt.service_id);
     return total + (service?.price || 0);
   }, 0);
 
@@ -19,7 +19,7 @@ const ReportsSection = () => {
   const monthlyData = completedAppointments.reduce((acc, apt) => {
     const month = new Date(apt.date).getMonth();
     const monthName = new Date(0, month).toLocaleDateString('pt-BR', { month: 'long' });
-    const service = services.find(s => s.id === apt.serviceId);
+    const service = services.find(s => s.id === apt.service_id);
     const revenue = service?.price || 0;
 
     const existing = acc.find(item => item.month === monthName);
@@ -34,9 +34,9 @@ const ReportsSection = () => {
 
   // Barber performance
   const barberData = barbers.map(barber => {
-    const barberAppointments = completedAppointments.filter(apt => apt.barberId === barber.id);
+    const barberAppointments = completedAppointments.filter(apt => apt.barber_id === barber.id);
     const revenue = barberAppointments.reduce((total, apt) => {
-      const service = services.find(s => s.id === apt.serviceId);
+      const service = services.find(s => s.id === apt.service_id);
       return total + (service?.price || 0);
     }, 0);
     
@@ -49,7 +49,7 @@ const ReportsSection = () => {
 
   // Service popularity
   const serviceData = services.map(service => {
-    const serviceAppointments = completedAppointments.filter(apt => apt.serviceId === service.id);
+    const serviceAppointments = completedAppointments.filter(apt => apt.service_id === service.id);
     return {
       name: service.name,
       count: serviceAppointments.length,

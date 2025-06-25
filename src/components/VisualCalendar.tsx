@@ -90,8 +90,8 @@ const VisualCalendar = () => {
                 </div>
                 {weekDays.map(day => {
                   const appointment = getAppointmentForSlot(day, time);
-                  const barber = appointment ? barbers.find(b => b.id === appointment.barberId) : null;
-                  const service = appointment ? services.find(s => s.id === appointment.serviceId) : null;
+                  const barber = appointment ? barbers.find(b => b.id === appointment.barber_id) : null;
+                  const service = appointment ? services.find(s => s.id === appointment.service_id) : null;
 
                   return (
                     <div key={`${day.toISOString()}-${time}`} className="min-h-[60px] border border-gray-200 rounded p-1">

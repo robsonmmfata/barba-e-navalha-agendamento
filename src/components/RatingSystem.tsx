@@ -31,7 +31,7 @@ const RatingSystem = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
 
   const userCompletedAppointments = appointments.filter(apt => 
-    apt.clientId === user?.id && 
+    apt.client_id === user?.id && 
     apt.status === 'concluido' &&
     !ratings.some(rating => rating.appointmentId === apt.id)
   );
@@ -45,7 +45,7 @@ const RatingSystem = () => {
     const newRating: Rating = {
       id: Date.now().toString(),
       appointmentId: selectedAppointment.id,
-      barberId: selectedAppointment.barberId,
+      barberId: selectedAppointment.barber_id,
       clientId: user?.id || '',
       rating: selectedRating,
       comment,
@@ -104,7 +104,7 @@ const RatingSystem = () => {
           <CardContent>
             <div className="space-y-3">
               {userCompletedAppointments.map(appointment => {
-                const barber = barbers.find(b => b.id === appointment.barberId);
+                const barber = barbers.find(b => b.id === appointment.barber_id);
                 return (
                   <div key={appointment.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>

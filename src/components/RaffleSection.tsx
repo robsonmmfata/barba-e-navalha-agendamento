@@ -23,12 +23,12 @@ const RaffleSection = () => {
 
   const activeRaffles = raffles.filter(raffle => 
     raffle.status === 'ativo' && 
-    new Date() >= new Date(raffle.startDate) &&
-    new Date() <= new Date(raffle.endDate) &&
-    raffle.participants.length < raffle.maxParticipants
+    new Date() >= new Date(raffle.start_date) &&
+    new Date() <= new Date(raffle.end_date) &&
+    raffle.participants.length < raffle.max_participants
   );
 
-  const handleParticipate = (e: React.FormEvent) => {
+  const handleParticipate = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!participantData.name || !participantData.phone) {
@@ -38,7 +38,7 @@ const RaffleSection = () => {
 
     if (!selectedRaffle) return;
 
-    const success = participateInRaffle(selectedRaffle.id, participantData.name, participantData.phone);
+    const success = await participateInRaffle(selectedRaffle.id, participantData.name, participantData.phone);
     
     if (success) {
       toast.success("Participação confirmada! Boa sorte!");
@@ -94,14 +94,14 @@ const RaffleSection = () => {
                       <Users className="h-4 w-4" />
                       Participantes:
                     </span>
-                    <span>{raffle.participants.length}/{raffle.maxParticipants}</span>
+                    <span>{raffle.participants.length}/{raffle.max_participants}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Termina em:
                     </span>
-                    <span>{format(new Date(raffle.endDate), "dd/MM/yyyy", { locale: ptBR })}</span>
+                    <span>{format(new Date(raffle.end_date), "dd/MM/yyyy", { locale: ptBR })}</span>
                   </div>
                 </div>
 

@@ -28,7 +28,11 @@ export const useRaffles = () => {
         .order('start_date', { ascending: false });
 
       if (error) throw error;
-      setRaffles(data || []);
+      setRaffles(data?.map(item => ({
+        ...item,
+        participants: Array.isArray(item.participants) ? item.participants : [],
+        status: item.status as 'ativo' | 'encerrado' | 'sorteado'
+      })) || []);
     } catch (error) {
       console.error('Error fetching raffles:', error);
       toast.error('Erro ao carregar sorteios');
@@ -50,9 +54,14 @@ export const useRaffles = () => {
         .single();
 
       if (error) throw error;
-      setRaffles(prev => [data, ...prev]);
+      const newRaffle: Raffle = {
+        ...data,
+        participants: Array.isArray(data.participants) ? data.participants : [],
+        status: data.status as 'ativo' | 'encerrado' | 'sorteado'
+      };
+      setRaffles(prev => [newRaffle, ...prev]);
       toast.success('Sorteio criado com sucesso!');
-      return data;
+      return newRaffle;
     } catch (error) {
       console.error('Error adding raffle:', error);
       toast.error('Erro ao criar sorteio');
@@ -70,11 +79,16 @@ export const useRaffles = () => {
         .single();
 
       if (error) throw error;
+      const updatedRaffle: Raffle = {
+        ...data,
+        participants: Array.isArray(data.participants) ? data.participants : [],
+        status: data.status as 'ativo' | 'encerrado' | 'sorteado'
+      };
       setRaffles(prev => prev.map(raffle => 
-        raffle.id === id ? data : raffle
+        raffle.id === id ? updatedRaffle : raffle
       ));
       toast.success('Sorteio atualizado com sucesso!');
-      return data;
+      return updatedRaffle;
     } catch (error) {
       console.error('Error updating raffle:', error);
       toast.error('Erro ao atualizar sorteio');
