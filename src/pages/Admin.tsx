@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -229,7 +230,7 @@ const Admin = () => {
             <CardContent>
               <div className="text-2xl font-bold text-white">
                 R$ {appointments.filter(a => a.status === 'concluido').reduce((acc, appointment) => {
-                  const service = services.find(s => s.id === appointment.serviceId);
+                  const service = services.find(s => s.id === appointment.service_id);
                   return acc + (service ? service.price : 0);
                 }, 0)}
               </div>
@@ -292,9 +293,9 @@ const Admin = () => {
                   <TableBody>
                     {appointments.map((appointment) => (
                       <TableRow key={appointment.id} className="border-amber-500/20">
-                        <TableCell className="text-white">{getClientName(appointment.clientId)}</TableCell>
-                        <TableCell className="text-white">{getBarberName(appointment.barberId)}</TableCell>
-                        <TableCell className="text-white">{getServiceName(appointment.serviceId)}</TableCell>
+                        <TableCell className="text-white">{getClientName(appointment.client_id)}</TableCell>
+                        <TableCell className="text-white">{getBarberName(appointment.barber_id)}</TableCell>
+                        <TableCell className="text-white">{getServiceName(appointment.service_id)}</TableCell>
                         <TableCell className="text-white">
                           {format(new Date(appointment.date), "dd/MM/yyyy", { locale: ptBR })}
                         </TableCell>
@@ -634,7 +635,7 @@ const Admin = () => {
                         <TableCell className="text-white">{client.phone}</TableCell>
                         <TableCell className="text-white">{client.email || '-'}</TableCell>
                         <TableCell className="text-white">
-                          {appointments.filter(a => a.clientId === client.id).length}
+                          {appointments.filter(a => a.client_id === client.id).length}
                         </TableCell>
                       </TableRow>
                     ))}
