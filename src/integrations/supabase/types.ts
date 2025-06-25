@@ -9,7 +9,68 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      campaign_messages: {
+        Row: {
+          campaign_id: string | null
+          content: string
+          created_at: string
+          id: string
+          recipient: string
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          recipient: string
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          campaign_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          recipient?: string
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_messages_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaigns: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

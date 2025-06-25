@@ -1,3 +1,4 @@
+
 import "./Index.css";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,8 +29,12 @@ const Index = () => {
         <div className="container mx-auto px-4 pt-32 relative z-10">
           <nav className="fixed top-0 left-0 w-full bg-barbershop-gold flex justify-between items-center py-6 px-8 z-50 shadow-md">
             <div className="flex items-center space-x-2">
-              <Scissors className="h-8 w-8 text-accent" />
-              <h1 className="text-2xl font-bold text-foreground">BarberShop Premium</h1>
+              <img 
+                src="/lovable-uploads/42302101-d256-41da-9c8a-4d0fb8cdf5d2.png" 
+                alt="J Barbearia" 
+                className="h-12 w-12 object-contain"
+              />
+              <h1 className="text-2xl font-bold text-foreground">J Barbearia</h1>
             </div>
             <div className="space-x-4">
               <Link to="/agendamento">
@@ -186,10 +191,14 @@ const Index = () => {
       <footer className="py-8 bg-black">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <Scissors className="h-6 w-6 text-barbershop-gold" />
-            <span className="text-white font-bold">BarberShop Premium</span>
+            <img 
+              src="/lovable-uploads/42302101-d256-41da-9c8a-4d0fb8cdf5d2.png" 
+              alt="J Barbearia" 
+              className="h-8 w-8 object-contain"
+            />
+            <span className="text-white font-bold">J Barbearia</span>
           </div>
-          <p className="text-gray-400">© 2024 BarberShop Premium. Robson Alex Todos os direitos reservados.</p>
+          <p className="text-gray-400">© 2024 J Barbearia. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>
