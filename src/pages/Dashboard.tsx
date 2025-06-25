@@ -8,16 +8,13 @@ import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useApp } from "@/contexts/AppContext";
-import { Calendar, Clock, User, Scissors, LogOut, Plus, BarChart, Bell, Star, Gift, CreditCard, Settings } from "lucide-react";
+import { Calendar, Clock, User, Scissors, LogOut, Plus, Bell, Star, Gift } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import ReportsSection from "@/components/ReportsSection";
 import NotificationSystem from "@/components/NotificationSystem";
 import VisualCalendar from "@/components/VisualCalendar";
 import RatingSystem from "@/components/RatingSystem";
 import LoyaltyProgram from "@/components/LoyaltyProgram";
-import PaymentSystem from "@/components/PaymentSystem";
-import SystemSettings from "@/components/SystemSettings";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -92,7 +89,7 @@ const Dashboard = () => {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="overflow-x-auto">
-            <TabsList className="grid grid-cols-4 md:grid-cols-8 w-full bg-white/80 backdrop-blur-sm min-w-[600px]">
+            <TabsList className="grid grid-cols-5 w-full bg-white/80 backdrop-blur-sm min-w-[600px]">
               <TabsTrigger value="overview" className="flex items-center gap-2 text-xs">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Perfil</span>
@@ -100,10 +97,6 @@ const Dashboard = () => {
               <TabsTrigger value="calendar" className="flex items-center gap-2 text-xs">
                 <Calendar className="h-4 w-4" />
                 <span className="hidden sm:inline">Agenda</span>
-              </TabsTrigger>
-              <TabsTrigger value="reports" className="flex items-center gap-2 text-xs">
-                <BarChart className="h-4 w-4" />
-                <span className="hidden sm:inline">Relatórios</span>
               </TabsTrigger>
               <TabsTrigger value="notifications" className="flex items-center gap-2 text-xs">
                 <Bell className="h-4 w-4" />
@@ -116,14 +109,6 @@ const Dashboard = () => {
               <TabsTrigger value="loyalty" className="flex items-center gap-2 text-xs">
                 <Gift className="h-4 w-4" />
                 <span className="hidden sm:inline">Fidelidade</span>
-              </TabsTrigger>
-              <TabsTrigger value="payments" className="flex items-center gap-2 text-xs">
-                <CreditCard className="h-4 w-4" />
-                <span className="hidden sm:inline">Pagamentos</span>
-              </TabsTrigger>
-              <TabsTrigger value="settings" className="flex items-center gap-2 text-xs">
-                <Settings className="h-4 w-4" />
-                <span className="hidden sm:inline">Config</span>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -275,10 +260,6 @@ const Dashboard = () => {
             <VisualCalendar />
           </TabsContent>
 
-          <TabsContent value="reports">
-            <ReportsSection />
-          </TabsContent>
-
           <TabsContent value="notifications">
             <NotificationSystem />
           </TabsContent>
@@ -289,14 +270,6 @@ const Dashboard = () => {
 
           <TabsContent value="loyalty">
             <LoyaltyProgram />
-          </TabsContent>
-
-          <TabsContent value="payments">
-            <PaymentSystem />
-          </TabsContent>
-
-          <TabsContent value="settings">
-            <SystemSettings />
           </TabsContent>
         </Tabs>
       </div>

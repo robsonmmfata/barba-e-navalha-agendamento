@@ -4,12 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useApp } from "@/contexts/AppContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { format, startOfWeek, addDays, isSameDay, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, Clock, User } from "lucide-react";
 
 const VisualCalendar = () => {
   const { appointments, barbers, services } = useApp();
+  const { user } = useAuth();
   const [currentWeek, setCurrentWeek] = useState(new Date());
 
   const weekStart = startOfWeek(currentWeek, { weekStartsOn: 1 });
@@ -22,8 +24,13 @@ const VisualCalendar = () => {
     "17:00", "17:30", "18:00", "18:30", "19:00", "19:30"
   ];
 
+  // Filter appointments for the current user
+  const userAppointments = appointments.filter(apt => 
+    apt.client_id === user?.id || apt.client_id === user?.name
+  );
+
   const getAppointmentForSlot = (date: Date, time: string) => {
-    return appointments.find(apt => 
+    return userAppointments.find(apt => 
       isSameDay(parseISO(apt.date), date) && apt.time === time
     );
   };
@@ -49,7 +56,7 @@ const VisualCalendar = () => {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-primary" />
-            Agenda Visual
+            Minha Agenda
           </CardTitle>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => navigateWeek('prev')}>
