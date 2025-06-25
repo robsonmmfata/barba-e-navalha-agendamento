@@ -34,7 +34,7 @@ const Index = () => {
                 alt="J Barbearia" 
                 className="h-12 w-12 object-contain"
               />
-              <h1 className="text-2xl font-bold text-foreground">J Barbearia</h1>
+              <h1 className="text-2xl font-bold text-foreground">Jean Barbearia</h1>
             </div>
             <div className="space-x-4">
               <Link to="/agendamento">
@@ -166,11 +166,11 @@ const Index = () => {
               <div className="space-y-4 text-secondary-foreground">
                 <div className="flex items-center">
                   <Phone className="h-5 w-5 text-barbershop-gold mr-3" />
-                  <span>(11) 99999-9999</span>
+                  <span>(16)99368-0212</span>
                 </div>
                 <div className="flex items-center">
                   <MapPin className="h-5 w-5 text-barbershop-gold mr-3" />
-                  <span>Rua da Barbearia, 123 - Centro</span>
+                  <span>Rua Luiz Granatto 1037, Jardim Arlindo laguna, Ribeirão Preto</span>
                 </div>
               </div>
               
@@ -196,9 +196,9 @@ const Index = () => {
               alt="J Barbearia" 
               className="h-8 w-8 object-contain"
             />
-            <span className="text-white font-bold">J Barbearia</span>
+            <span className="text-white font-bold">Jean Barbearia</span>
           </div>
-          <p className="text-gray-400">© 2024 J Barbearia. Todos os direitos reservados.</p>
+          <p className="text-gray-400">Desenvolvido Por Robson Alex © 2025 J Barbearia. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>
