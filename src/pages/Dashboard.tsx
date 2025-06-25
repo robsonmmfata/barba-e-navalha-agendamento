@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +31,7 @@ const Dashboard = () => {
   }
 
   const userAppointments = appointments.filter(apt => {
-    return apt.clientId === user.id || apt.clientId === user.name;
+    return apt.client_id === user.id || apt.client_id === user.name;
   });
 
   const handleLogout = () => {
@@ -225,8 +226,8 @@ const Dashboard = () => {
                 ) : (
                   <div className="space-y-4">
                     {userAppointments.map((appointment) => {
-                      const barber = barbers.find(b => b.id === appointment.barberId);
-                      const service = services.find(s => s.id === appointment.serviceId);
+                      const barber = barbers.find(b => b.id === appointment.barber_id);
+                      const service = services.find(s => s.id === appointment.service_id);
                       
                       return (
                         <div key={appointment.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">

@@ -52,9 +52,9 @@ const Agendamento = () => {
     
     // Add appointment
     addAppointment({
-      clientId: user?.id || Date.now().toString(),
-      barberId: selectedBarber,
-      serviceId: selectedService,
+      client_id: user?.id || Date.now().toString(),
+      barber_id: selectedBarber,
+      service_id: selectedService,
       date: format(selectedDate, "yyyy-MM-dd"),
       time: selectedTime,
       status: "agendado"

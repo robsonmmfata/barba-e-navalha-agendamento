@@ -30,7 +30,7 @@ export const useRaffles = () => {
       if (error) throw error;
       setRaffles(data?.map(item => ({
         ...item,
-        participants: Array.isArray(item.participants) ? item.participants : [],
+        participants: Array.isArray(item.participants) ? item.participants as string[] : [],
         status: item.status as 'ativo' | 'encerrado' | 'sorteado'
       })) || []);
     } catch (error) {
@@ -56,7 +56,7 @@ export const useRaffles = () => {
       if (error) throw error;
       const newRaffle: Raffle = {
         ...data,
-        participants: Array.isArray(data.participants) ? data.participants : [],
+        participants: Array.isArray(data.participants) ? data.participants as string[] : [],
         status: data.status as 'ativo' | 'encerrado' | 'sorteado'
       };
       setRaffles(prev => [newRaffle, ...prev]);
@@ -81,7 +81,7 @@ export const useRaffles = () => {
       if (error) throw error;
       const updatedRaffle: Raffle = {
         ...data,
-        participants: Array.isArray(data.participants) ? data.participants : [],
+        participants: Array.isArray(data.participants) ? data.participants as string[] : [],
         status: data.status as 'ativo' | 'encerrado' | 'sorteado'
       };
       setRaffles(prev => prev.map(raffle => 
