@@ -1,5 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface User {
   id: string;
@@ -16,6 +18,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,34 +33,51 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('barbershop-user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+    // Check for saved user in localStorage for development
+    const checkSavedUser = () => {
+      const savedUser = localStorage.getItem('barbershop-user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+      setLoading(false);
+    };
+
+    checkSavedUser();
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Admin login
-    if (email === 'admin@barbearia.com' && password === 'admin123') {
-      const adminUser: User = {
-        id: 'admin',
-        name: 'Administrador',
-        email: 'admin@barbearia.com',
-        phone: '',
-        isAdmin: true
-      };
-      setUser(adminUser);
-      localStorage.setItem('barbershop-user', JSON.stringify(adminUser));
-      return true;
-    }
+    try {
+      // Admin login
+      if (email === 'admin@barbearia.com' && password === 'admin123') {
+        const adminUser: User = {
+          id: 'admin',
+          name: 'Administrador',
+          email: 'admin@barbearia.com',
+          phone: '',
+          isAdmin: true
+        };
+        setUser(adminUser);
+        localStorage.setItem('barbershop-user', JSON.stringify(adminUser));
+        toast.success('Login realizado com sucesso!');
+        return true;
+      }
 
-    // Client login (simulate checking against stored clients)
-    const clients = JSON.parse(localStorage.getItem('barbershop-clients') || '[]');
-    const client = clients.find((c: any) => c.email === email);
-    
-    if (client) {
+      // Client login using Supabase
+      const { data: client, error } = await supabase
+        .from('clients')
+        .select('id, name, email, phone')
+        .eq('email', email)
+        .eq('password', password) // Note: In production, use proper password hashing
+        .single();
+
+      if (error || !client) {
+        toast.error('Email ou senha incorretos');
+        return false;
+      }
+
       const userData: User = {
         id: client.id,
         name: client.name,
@@ -65,45 +85,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         phone: client.phone,
         isAdmin: false
       };
+      
       setUser(userData);
       localStorage.setItem('barbershop-user', JSON.stringify(userData));
+      toast.success('Login realizado com sucesso!');
       return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Erro ao fazer login');
+      return false;
     }
-
-    return false;
   };
 
   const register = async (name: string, email: string, password: string, phone: string): Promise<boolean> => {
     try {
-      const clients = JSON.parse(localStorage.getItem('barbershop-clients') || '[]');
-      
       // Check if email already exists
-      if (clients.some((c: any) => c.email === email)) {
+      const { data: existingClient } = await supabase
+        .from('clients')
+        .select('id')
+        .eq('email', email)
+        .single();
+
+      if (existingClient) {
+        toast.error('Email já cadastrado');
         return false;
       }
 
-      const newClient = {
-        id: Date.now().toString(),
-        name,
-        email,
-        phone,
-        password // In a real app, this would be hashed
-      };
+      // Create new client
+      const { data: newClient, error } = await supabase
+        .from('clients')
+        .insert([{ name, email, password, phone }])
+        .select('id, name, email, phone')
+        .single();
 
-      clients.push(newClient);
-      localStorage.setItem('barbershop-clients', JSON.stringify(clients));
+      if (error) {
+        console.error('Registration error:', error);
+        toast.error('Erro ao criar conta');
+        return false;
+      }
 
       const userData: User = {
         id: newClient.id,
-        name,
-        email,
-        phone,
+        name: newClient.name,
+        email: newClient.email,
+        phone: newClient.phone,
         isAdmin: false
       };
+      
       setUser(userData);
       localStorage.setItem('barbershop-user', JSON.stringify(userData));
+      toast.success('Conta criada com sucesso!');
       return true;
-    } catch {
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast.error('Erro ao criar conta');
       return false;
     }
   };
@@ -111,6 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setUser(null);
     localStorage.removeItem('barbershop-user');
+    toast.success('Logout realizado com sucesso!');
   };
 
   return (
@@ -120,7 +156,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       register,
       logout,
       isAuthenticated: !!user,
-      isAdmin: user?.isAdmin || false
+      isAdmin: user?.isAdmin || false,
+      loading
     }}>
       {children}
     </AuthContext.Provider>

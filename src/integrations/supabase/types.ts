@@ -9,6 +9,91 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          barber_id: string
+          client_id: string
+          created_at: string
+          date: string
+          id: string
+          service_id: string
+          status: string
+          time: string
+          updated_at: string
+        }
+        Insert: {
+          barber_id: string
+          client_id: string
+          created_at?: string
+          date: string
+          id?: string
+          service_id: string
+          status?: string
+          time: string
+          updated_at?: string
+        }
+        Update: {
+          barber_id?: string
+          client_id?: string
+          created_at?: string
+          date?: string
+          id?: string
+          service_id?: string
+          status?: string
+          time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_barber_id_fkey"
+            columns: ["barber_id"]
+            isOneToOne: false
+            referencedRelation: "barbers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      barbers: {
+        Row: {
+          created_at: string
+          experience: string
+          id: string
+          name: string
+          specialty: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          experience: string
+          id?: string
+          name: string
+          specialty: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          experience?: string
+          id?: string
+          name?: string
+          specialty?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       campaign_messages: {
         Row: {
           campaign_id: string | null
@@ -68,6 +153,108 @@ export type Database = {
           name?: string
           status?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      clients: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          password: string | null
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          password?: string | null
+          phone: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          password?: string | null
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      raffles: {
+        Row: {
+          created_at: string
+          description: string
+          end_date: string
+          id: string
+          max_participants: number
+          participants: Json
+          prize: string
+          start_date: string
+          status: string
+          title: string
+          updated_at: string
+          winner: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          end_date: string
+          id?: string
+          max_participants: number
+          participants?: Json
+          prize: string
+          start_date: string
+          status?: string
+          title: string
+          updated_at?: string
+          winner?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          end_date?: string
+          id?: string
+          max_participants?: number
+          participants?: Json
+          prize?: string
+          start_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          winner?: string | null
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          created_at: string
+          duration: number
+          id: string
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          duration: number
+          id?: string
+          name: string
+          price: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          duration?: number
+          id?: string
+          name?: string
+          price?: number
+          updated_at?: string
         }
         Relationships: []
       }
